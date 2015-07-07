@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Stellwerk</string>
+    <string name="power_on">Strom an</string>
+    <string name="power_off">Strom aus</string>
+    <string name="edit">Editieren</string>
+    <string name="save">Speichern</string>
+    <string name="app_description">Android SRCP Client</string>
+    <string name="new_layout">Neuer Gleisplan</string>
+    <string name="width">Breite (Segmente)</string>
+    <string name="height">Höhe (Segmente)</string>
+    <string name="create">Erstellen</string>
+    <string name="server_address">Server-Addresse</string>
+    <string name="server_port">Server-Port</string>
+    <string name="segment_setting">Segment einstellen</string>
+    <string name="bus">Bus</string>
+    <string name="address">Addresse</string>
+    <string name="id">ID</string>
+    <string name="test">Test</string>
+    <string name="marker_id">Marker ID</string>
+    <string name="configuration">Einstellen</string>
+    <string name="add_loco">Neue Lok</string>
+    <string name="image">Bild</string>
+    <string name="value">Wert</string>
+    <string name="program">schreiben</string>
+    <string name="done">fertig</string>
+    <string name="loco">Lokomotive</string>
+    <string name="choose">wählen...</string>
+    <string name="connecting">Verbinde mit Server...</string>
+    <string name="error">Leider ist ein Fehler aufgetreten.</string>
+</resources>

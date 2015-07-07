@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black_trans"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+<LinearLayout android:layout_gravity="center"
+    android:background="@android:color/background_light"
+    android:orientation="vertical" android:layout_width="450dp"
+    android:padding="10dp"
+    android:layout_height="fill_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textSize="32sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:text="@string/edit"/>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+<de.ludetis.android.tools.FlowLayout
+    android:id="@+id/container"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"></de.ludetis.android.tools.FlowLayout>
+    </ScrollView>
+</LinearLayout>
+    </FrameLayout>

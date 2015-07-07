@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Signalbox</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="power_on">Power on</string>
+    <string name="power_off">Power off</string>
+    <string name="configuration">Config</string>
+    <string name="edit">edit</string>
+    <string name="save">save</string>
+    <string name="app_description">Android SRCP Client</string>
+    <string name="new_layout">New layout</string>
+    <string name="width">width (segments)</string>
+    <string name="height">height (segments)</string>
+    <string name="create">create</string>
+    <string name="server_address">Server Address</string>
+    <string name="server_port">Server Port</string>
+    <string name="segment_setting">Segment Setting</string>
+    <string name="bus">Bus</string>
+    <string name="address">Address</string>
+    <string name="id">ID</string>
+    <string name="test">Test</string>
+    <string name="marker_id">Marker ID</string>
+    <string name="stop">stop</string>
+    <string name="add_loco">add loco</string>
+    <string name="image">Image</string>
+    <string name="service_mode">Service Mode</string>
+    <string name="cv">CV</string>
+    <string name="value">Value</string>
+    <string name="program">program</string>
+    <string name="done">done</string>
+    <string name="loco">Locomotive</string>
+    <string name="okay">okay</string>
+    <string name="choose">choose...</string>
+    <string name="connecting">connecting to server...</string>
+    <string name="error">error occured</string>
+    <string name="connected">connected</string>
+    <string name="disconnected">disconnected</string>
+
+</resources>
