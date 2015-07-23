@@ -86,9 +86,9 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 19 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="eventbus-2.4.0" level="project" />
-    <orderEntry type="library" exported="" name="jsrcpc-2.4" level="project" />
-    <orderEntry type="library" exported="" name="mapdb-1.0.7" level="project" />
     <orderEntry type="library" exported="" name="log4j-1.2.11" level="project" />
+    <orderEntry type="library" exported="" name="eventbus-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="mapdb-1.0.7" level="project" />
+    <orderEntry type="library" exported="" name="jsrcpc-2.4" level="project" />
   </component>
 </module>

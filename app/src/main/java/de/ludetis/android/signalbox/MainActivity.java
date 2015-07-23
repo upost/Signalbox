@@ -1,5 +1,9 @@
 package de.ludetis.android.signalbox;
 
+/**
+ * copyright 2015 Uwe Post
+ */
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -25,6 +29,7 @@ import de.greenrobot.event.EventBus;
 import de.ludetis.android.signalbox.model.Loco;
 import de.ludetis.android.signalbox.model.Segment;
 import de.ludetis.android.signalbox.model.ServiceMessage;
+import de.ludetis.android.signalbox.model.SrcpGenericAccessoryInfoMessage;
 import de.ludetis.android.signalbox.model.SrcpLocoInfoMessage;
 import de.ludetis.android.signalbox.model.SrcpMessage;
 import de.ludetis.android.signalbox.model.StatusMessage;
@@ -97,11 +102,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         startService(new Intent(this, SrcpService.class));
 
         showLocoList();
-
         for(Loco l : locoManager.getLocoList()) {
             l.initSent=false;
         }
-
     }
 
     private void showLocoList() {
@@ -141,6 +144,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             loadLayout();
             fillContainer();
         }
+
+        buttonConnection.setImageResource(R.drawable.disconnected);
+        buttonPower.setVisibility(View.INVISIBLE);
 
         EventBus.getDefault().register(this);
 
@@ -389,32 +395,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private void send(final String what) {
         EventBus.getDefault().post(new SrcpMessage(what));
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                sendInBackground(what);
-//            }
-//        });
     }
 
-//    private synchronized void sendInBackground(String what) {
-//        if (session == null || session.getCommandChannel() == null) {
-//            showConnectionError();
-//            return;
-//        }
-//        try {
-//            for (int i = 0; i < RETRIES; i++) {
-//                String res = session.getCommandChannel().send(what);
-//                Log.d(LOG_TAG, "result: " + res);
-//                Thread.sleep(RETRY_DELAY_MS);
-//            }
-//
-//        } catch (SRCPException e) {
-//            Log.e(LOG_TAG, "exception", e);
-//        } catch (InterruptedException e) {
-//            ;
-//        }
-//    }
 
     private void showConnectionError() {
         runOnUiThread(new Runnable() {
@@ -432,9 +414,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
      * @param port i.e. 0 or 1 to set a switch
      */
     private void sendSetGenericAccessoryCommand(int bus, int address, int port) {
-        send("INIT " + bus + " GA " + address + " N");
         send("SET " + bus + " GA " + address + " " + port + " 1 100"); // format: SET <bus> GA <addr> <port> <value> <delay>
     }
+
+    private void sendInitGenericAccessoryCommand(int bus, int address) {
+        send("INIT " + bus + " GA " + address + " N");
+    }
+
+    private void sendGetGenericAccessoryCommand(int bus, int address, int port) {
+        send("GET " + bus + " GA " + address  + " " + port);
+    }
+
 
     /**
      *
@@ -446,8 +436,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
      *                   SET 1 GL 6 0 37 100 0 0 0 0 0
      */
     private void sendSetGenericLocoCommand(int bus, int address, int direction, int speed, int maxSpeed, int[] functions) {
-        if(!currentloco.initSent)
-            sendInitGenericLocoCommand(bus,address, SPEED_STEPS,5);
+    //if(!currentloco.initSent)
+    //            sendInitGenericLocoCommand(bus,address, SPEED_STEPS,5);
         String fu="";
         for(int f:functions) {
             fu+=Integer.toString(f)+" ";
@@ -456,14 +446,22 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void sendGetGenericLocoCommand(int bus, Loco loco) {
-        if(!loco.initSent)
-            sendInitGenericLocoCommand(bus,loco.address, SPEED_STEPS,5);
+//        if(!loco.initSent)
+//            sendInitGenericLocoCommand(bus,loco.address, SPEED_STEPS,5);
+        Log.d(LOG_TAG, "sending get gl for " + loco.address);
         send("GET "+bus+" GL " + loco.address);
     }
 
     private void sendInitGenericLocoCommand(int bus, int address, int speedSteps, int functions) {
         send("INIT "+bus+" GL "+address+" N 1 "+speedSteps+" "+functions);
         currentloco.initSent=true;
+    }
+
+    private void initCurrentLoco() {
+        if(currentloco!=null) {
+            Log.d(LOG_TAG,"init current loco...");
+            sendInitGenericLocoCommand(1, currentloco.address, SPEED_STEPS, 5);
+        }
     }
 
     @Override
@@ -638,6 +636,23 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         }
     }
 
+    public void onEventMainThread(SrcpGenericAccessoryInfoMessage msg) {
+        if(!msg.isAvailable()) {
+
+            sendInitGenericAccessoryCommand(msg.getBus(), msg.getAddress());
+        } else {
+            for(Segment s : layout) {
+                if(s.getBus()==msg.getBus() && s.getAddress()==msg.getAddress()) {
+                    if(msg.getValue()>0) {
+                        s.setState(msg.getPort());
+                        Log.d(LOG_TAG, "switch " + s.getAddress() + " is currently set to" + s.getState());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     public void onEventMainThread(StatusMessage msg) {
         if(progressDialog!=null && progressDialog.isShowing()) progressDialog.dismiss();
         switch(msg.status) {
@@ -646,6 +661,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 connected=true;
                 buttonConnection.setImageResource(R.drawable.connected);
                 buttonPower.setVisibility(View.VISIBLE);
+                for(Loco l : locoManager.getLocoList()) {
+                    l.initSent=false;
+                }
                 checkPower();
                 break;
             case DISCONNECTED:
@@ -658,14 +676,29 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 power=true;
                 buttonConnection.setVisibility(View.VISIBLE);
                 buttonPower.setImageResource(R.drawable.power_on);
+                checkGenericAccessorySettings();
                 break;
             case POWER_OFF:
                 power=false;
                 buttonConnection.setVisibility(View.VISIBLE);
                 buttonPower.setImageResource(R.drawable.power_off);
                 break;
+            case CURRENT_LOCO_UNKNOWN:
+                initCurrentLoco();
+                break;
         }
     }
+
+    private void checkGenericAccessorySettings() {
+        for(Segment s : layout) {
+            if(s.isSwitch()) {
+                sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 0);
+                sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 1);
+            }
+        }
+    }
+
+
 }
 
 // service mode:

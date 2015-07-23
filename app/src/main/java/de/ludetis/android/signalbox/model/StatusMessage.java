@@ -9,7 +9,14 @@ public class StatusMessage {
         this.status = status;
     }
 
-    public enum Status {CONNECTED,DISCONNECTED,POWER_ON,POWER_OFF,ERROR};
+    public enum Status {CONNECTED,DISCONNECTED,POWER_ON,POWER_OFF, CURRENT_LOCO_UNKNOWN, ERROR};
 
     public final Status status;
+
+    @Override
+    public String toString() {
+        return "StatusMessage{" +
+                "status=" + status +
+                '}';
+    }
 }

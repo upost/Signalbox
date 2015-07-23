@@ -14,6 +14,7 @@ import de.dermoba.srcp.common.exception.SRCPException;
 import de.greenrobot.event.EventBus;
 import de.ludetis.android.signalbox.model.ServiceMessage;
 import de.ludetis.android.signalbox.model.ServiceModeMessage;
+import de.ludetis.android.signalbox.model.SrcpGenericAccessoryInfoMessage;
 import de.ludetis.android.signalbox.model.SrcpLocoInfoMessage;
 import de.ludetis.android.signalbox.model.SrcpMessage;
 import de.ludetis.android.signalbox.model.StatusMessage;
@@ -85,6 +86,16 @@ public class SrcpService extends Service {
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.ERROR));
             Log.e(LOG_TAG, "exception", e);
             result=false;
+            if(what.startsWith("SET") && what.contains("GL")) {
+                EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.CURRENT_LOCO_UNKNOWN));
+            } else if(what.startsWith("GET") && what.contains("GA")) {
+                Log.d(LOG_TAG, "GET GA failed, need to init...");
+                String[] s = TextUtils.split(what," ");
+                EventBus.getDefault().post(new SrcpGenericAccessoryInfoMessage(Integer.parseInt(s[1]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),false));
+            } else if(what.startsWith("GET 1 POWER")){
+                disconnect();
+            }
+
         } catch (InterruptedException e) {
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.ERROR));
             result=false;
@@ -108,8 +119,15 @@ public class SrcpService extends Service {
                     Integer.parseInt(s[7]), Integer.parseInt(s[8]),
                     fu));
         }
+        if("GA".equals(s[4])) {
+            // GA info
+            Log.d(LOG_TAG,"incoming info ga result: " + res);
+            EventBus.getDefault().post(new SrcpGenericAccessoryInfoMessage(Integer.parseInt(s[3]),
+                    Integer.parseInt(s[5]),Integer.parseInt(s[6]), Integer.parseInt(s[7]) ));
+                    //List<Integer> funcs = new ArrayList<Integer>();
+        }
         if("POWER".equals(s[4])) {
-            Log.d(LOG_TAG,"incoming info power result: " + res);
+            Log.d(LOG_TAG,"incoming get power result: " + res);
             if("ON".equals(s[5])) {
                 EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.POWER_ON));
             }
@@ -169,12 +187,12 @@ public class SrcpService extends Service {
 //                session.getCommandChannel().send("SET 1 POWER OFF");
                 session.disconnect();
                 session=null;
-                EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.DISCONNECTED));
+
             }
         } catch (SRCPException e) {
-            EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.DISCONNECTED));
             Log.e(LOG_TAG, "exception", e);
         }
+        EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.DISCONNECTED));
 
 
     }
