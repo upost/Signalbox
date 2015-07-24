@@ -8,7 +8,8 @@ import java.util.UUID;
  */
 public class Loco implements Serializable {
 
-    public Loco(int address, int direction, int[] function, String image) {
+    public Loco(int bus, int address, int direction, int[] function, String image) {
+        this.bus = bus;
         this.address = address;
         this.direction = direction;
         this.function = function;
@@ -17,6 +18,7 @@ public class Loco implements Serializable {
     }
 
     public UUID uuid;
+    private int bus;
     public int address;
     public int direction;
     public int[] function;
@@ -44,6 +46,10 @@ public class Loco implements Serializable {
 
         return uuid.equals(loco.uuid);
 
+    }
+
+    public int getBus() {
+        return bus==0?1:bus;
     }
 
     @Override

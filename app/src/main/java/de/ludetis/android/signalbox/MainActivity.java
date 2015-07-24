@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,7 +50,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private static final int COLOR_SET = Color.rgb(100,100,0);
     private static final int COLOR_NOTSET = Color.rgb(20,20,20);
     public static final int SPEED_STEPS = 28;
-    private String server = "192.168.178.39"; // make configurable
+    private static final int DEFAULT_BUS = 1;
+    private String server = "192.168.178.39";
     private int port = 4303;
     private Collection<Segment> layout = new HashSet<Segment>();
     private SwitchListener switchListener = new SwitchListener();
@@ -145,6 +145,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             fillContainer();
         }
 
+        connected=false;
         buttonConnection.setImageResource(R.drawable.disconnected);
         buttonPower.setVisibility(View.INVISIBLE);
 
@@ -249,10 +250,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 break;
             case R.id.power:
                 if(power) {
-                    //if(currentloco!=null) currentloco.reset();
-                    send("SET 1 POWER OFF");
+                    send("SET "+DEFAULT_BUS+" POWER OFF");
                 } else {
-                    send("SET 1 POWER ON");
+                    send("SET "+DEFAULT_BUS+" POWER ON");
                 }
 
                 break;
@@ -302,7 +302,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 emergencyStop();
                 break;
             case R.id.add_loco:
-                final Loco l = new Loco(0,0,new int[5],"");
+                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[5],"");
                 showLocoDialog(l, new LocoDialog.OnDataConfirmedListener() {
                     @Override
                     public void onDataConfirmed(Loco loco) {
@@ -319,13 +319,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void updateController() {
-        ((Button)findViewById(R.id.function0)).setBackgroundColor(currentloco.function[0]>0 ? COLOR_SET : COLOR_NOTSET);
-        ((Button)findViewById(R.id.function1)).setBackgroundColor(currentloco.function[1] > 0 ? COLOR_SET : COLOR_NOTSET);
-        ((Button)findViewById(R.id.function2)).setBackgroundColor(currentloco.function[2] > 0 ? COLOR_SET : COLOR_NOTSET);
-        ((Button)findViewById(R.id.function3)).setBackgroundColor(currentloco.function[3] > 0 ? COLOR_SET : COLOR_NOTSET);
-        ((Button)findViewById(R.id.function4)).setBackgroundColor(currentloco.function[4] > 0 ? COLOR_SET : COLOR_NOTSET);
-        ((Button)findViewById(R.id.directionForward)).setBackgroundColor( currentloco.direction==0 ? COLOR_SET : COLOR_NOTSET );
-        ((Button)findViewById(R.id.directionBack)).setBackgroundColor( currentloco.direction==1 ? COLOR_SET : COLOR_NOTSET );
+        (findViewById(R.id.function0)).setBackgroundColor(currentloco.function[0]>0 ? COLOR_SET : COLOR_NOTSET);
+        (findViewById(R.id.function1)).setBackgroundColor(currentloco.function[1] > 0 ? COLOR_SET : COLOR_NOTSET);
+        (findViewById(R.id.function2)).setBackgroundColor(currentloco.function[2] > 0 ? COLOR_SET : COLOR_NOTSET);
+        (findViewById(R.id.function3)).setBackgroundColor(currentloco.function[3] > 0 ? COLOR_SET : COLOR_NOTSET);
+        (findViewById(R.id.function4)).setBackgroundColor(currentloco.function[4] > 0 ? COLOR_SET : COLOR_NOTSET);
+        (findViewById(R.id.directionForward)).setBackgroundColor( currentloco.direction==0 ? COLOR_SET : COLOR_NOTSET );
+        (findViewById(R.id.directionBack)).setBackgroundColor( currentloco.direction==1 ? COLOR_SET : COLOR_NOTSET );
         ((ProgressBar)findViewById(R.id.speedControl)).setProgress(currentloco.speed);
     }
 
@@ -378,13 +378,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void toggleEdit() {
-        Button b = (Button) findViewById(R.id.edit);
+        ImageButton b = (ImageButton) findViewById(R.id.edit);
         edit = !edit;
-        b.setTextColor(edit ? getResources().getColor(android.R.color.holo_green_light) : getResources().getColor(android.R.color.white));
+        b.setImageResource(edit ? R.drawable.ic_menu_edit_active: R.drawable.ic_menu_edit);
         if(edit) {
-            b.setText(R.string.save);
+//
         } else {
-            b.setText(R.string.edit);
             Log.d(LOG_TAG, "saving layout");
             storage.put("layout", layout);
             storage.flush();
@@ -460,7 +459,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private void initCurrentLoco() {
         if(currentloco!=null) {
             Log.d(LOG_TAG,"init current loco...");
-            sendInitGenericLocoCommand(1, currentloco.address, SPEED_STEPS, 5);
+            sendInitGenericLocoCommand(currentloco.getBus(), currentloco.address, SPEED_STEPS, 5);
         }
     }
 
@@ -474,12 +473,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void sendLocoData(Loco lo) {
-        sendSetGenericLocoCommand(1, lo.address, lo.direction, lo.speed, 100, lo.function);
+        sendSetGenericLocoCommand(lo.getBus(), lo.address, lo.direction, lo.speed, 100, lo.function);
 
     }
 
     public void emergencyStop() {
-        sendSetGenericLocoCommand(1, currentloco.address, 2, 0, 100, currentloco.function);
+        sendSetGenericLocoCommand(currentloco.getBus(), currentloco.address, 2, 0, 100, currentloco.function);
         stopLoco();
     }
 

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="jsrcpc-2.4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/jsrcpc-2.4.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

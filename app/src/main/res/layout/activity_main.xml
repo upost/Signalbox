@@ -34,17 +34,76 @@
             android:textColor="@android:color/white"
             android:textSize="12sp" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp" android:layout_weight="1">
+        <View
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <de.ludetis.android.tools.FlowLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/connection"
+                android:layout_width="@dimen/imagebutton_width"
+                android:layout_height="@dimen/imagebutton_height"
+                android:padding="@dimen/imagebutton_padding"
+                android:src="@drawable/disconnected"
+                android:scaleType="centerInside"/>
+            <ImageButton
+                android:id="@+id/power"
+                android:layout_width="@dimen/imagebutton_width"
+                android:layout_height="@dimen/imagebutton_height"
+                android:padding="@dimen/imagebutton_padding"
+                android:src="@drawable/power_off"
+                android:scaleType="centerInside"/>
+
+            <ImageButton
+                android:id="@+id/configuration"
+                android:layout_width="@dimen/imagebutton_width"
+                android:layout_height="@dimen/imagebutton_height"
+                android:src="@drawable/ic_menu_manage" />
+
+            <ImageButton
+                android:id="@+id/edit"
+                android:layout_width="@dimen/imagebutton_width"
+                android:layout_height="@dimen/imagebutton_height"
+                android:src="@drawable/ic_menu_edit" />
+        </de.ludetis.android.tools.FlowLayout>
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <us.gorges.viewaclue.TwoDScrollView
+            android:drawingCacheQuality="low"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+
+            android:layout_weight="1">
+
+            <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </us.gorges.viewaclue.TwoDScrollView>
+
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
         <ScrollView android:id="@+id/chooser"
-            android:layout_width="match_parent"
-            android:visibility="visible"
-            android:layout_height="match_parent" >
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="match_parent" >
             <LinearLayout android:id="@+id/locolist" android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                          android:layout_width="match_parent"
+                          android:layout_height="wrap_content">
                 <ImageView
                     android:layout_width="125dp"
                     android:layout_height="80dp"
@@ -64,9 +123,9 @@
 
         <LinearLayout
             android:id="@+id/controller"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="bottom|center_horizontal"
             android:orientation="vertical">
             <ImageView
@@ -79,18 +138,20 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_gravity="center_horizontal"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:orientation="horizontal">
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <Button
+                    <ImageButton
                         android:id="@+id/function0"
                         android:layout_width="@dimen/smallbutton_size"
                         android:layout_height="@dimen/smallbutton_size"
-                        android:padding="0dp"
-                        android:text="F0" />
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/light" />
                     <Button
                         android:id="@+id/function1"
                         android:layout_width="@dimen/smallbutton_size"
@@ -118,7 +179,7 @@
                 </LinearLayout>
                 <de.ludetis.android.view.VerticalSeekBar
                     android:layout_width="wrap_content"
-                    android:layout_height="200dp"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="20dp"
                     android:background="@drawable/slider_bg"
                     android:layout_gravity="center_horizontal"
@@ -153,60 +214,5 @@
 
         </LinearLayout>
 
-        </FrameLayout>
-
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:orientation="vertical">
-        <us.gorges.viewaclue.TwoDScrollView
-            android:drawingCacheQuality="low"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-
-            android:layout_weight="1">
-
-            <FrameLayout
-                android:id="@+id/container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </us.gorges.viewaclue.TwoDScrollView>
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/connection"
-                android:layout_width="@dimen/imagebutton_width"
-                android:layout_height="@dimen/imagebutton_height"
-                android:padding="@dimen/imagebutton_padding"
-                android:src="@drawable/disconnected"
-                android:scaleType="centerInside"/>
-            <ImageButton
-                android:id="@+id/power"
-                android:layout_width="@dimen/imagebutton_width"
-                android:layout_height="@dimen/imagebutton_height"
-                android:padding="@dimen/imagebutton_padding"
-                android:src="@drawable/power_off"
-                android:scaleType="centerInside"/>
-
-
-            <Button
-                android:id="@+id/configuration"
-                android:layout_width="@dimen/button_width"
-                android:layout_height="wrap_content"
-                android:text="@string/configuration" />
-
-            <Button
-                android:id="@+id/edit"
-                android:layout_width="@dimen/button_width"
-                android:layout_height="wrap_content"
-                android:text="@string/edit"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-    </LinearLayout>
-
-
+    </FrameLayout>
 </LinearLayout>
