@@ -73,7 +73,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        storage = new MapDbStorage("signalbox");
+        storage = new MapDbStorage("signalbox1");
 
         locoManager = new LocoManager(storage);
 
@@ -249,10 +249,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
                 break;
             case R.id.power:
-                if(power) {
-                    send("SET "+DEFAULT_BUS+" POWER OFF");
-                } else {
-                    send("SET "+DEFAULT_BUS+" POWER ON");
+                if(connected) {
+                    if (power) {
+                        send("SET " + DEFAULT_BUS + " POWER OFF");
+                    } else {
+                        send("SET " + DEFAULT_BUS + " POWER ON");
+                    }
                 }
 
                 break;
@@ -262,41 +264,55 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 toggleEdit();
                 break;
             case R.id.function0:
-                currentloco.activateFunction(0);
-                updateController();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.activateFunction(0);
+                    updateController();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.function1:
-                currentloco.activateFunction(1);
-                updateController();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.activateFunction(1);
+                    updateController();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.function2:
-                currentloco.activateFunction(2);
-                updateController();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.activateFunction(2);
+                    updateController();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.function3:
-                currentloco.activateFunction(3);
-                updateController();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.activateFunction(3);
+                    updateController();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.function4:
-                currentloco.activateFunction(4);
-                updateController();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.activateFunction(4);
+                    updateController();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.directionForward:
-                currentloco.direction=0;
-                updateController();
-                stopLoco();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.direction = 0;
+                    updateController();
+                    stopLoco();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.directionBack:
-                currentloco.direction=1;
-                updateController();
-                stopLoco();
-                sendLocoData(currentloco);
+                if(connected) {
+                    currentloco.direction = 1;
+                    updateController();
+                    stopLoco();
+                    sendLocoData(currentloco);
+                }
                 break;
             case R.id.stop:
                 emergencyStop();
@@ -515,8 +531,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 if(edit) {
                     editSegment(sv);
                 } else {
-                    switchSwitch(sv.getSegment());
-                    sv.invalidate();
+                    if(connected) {
+                        switchSwitch(sv.getSegment());
+                        sv.invalidate();
+                    }
                 }
             }
         }

@@ -8,6 +8,8 @@ import java.util.UUID;
  */
 public class Loco implements Serializable {
 
+    static final long serialVersionUID =-3402530285538002228L;
+
     public Loco(int bus, int address, int direction, int[] function, String image) {
         this.bus = bus;
         this.address = address;
@@ -55,5 +57,9 @@ public class Loco implements Serializable {
     @Override
     public int hashCode() {
         return uuid.hashCode();
+    }
+
+    public void setBus(int bus) {
+        this.bus = bus;
     }
 }

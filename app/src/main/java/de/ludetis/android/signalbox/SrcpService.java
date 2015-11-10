@@ -41,7 +41,7 @@ public class SrcpService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        storage = new MapDbStorage("signalbox");
+        storage = new MapDbStorage("signalbox1");
         EventBus.getDefault().register(this);
     }
 
@@ -86,7 +86,7 @@ public class SrcpService extends Service {
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.ERROR));
             Log.e(LOG_TAG, "exception", e);
             result=false;
-            if(what.startsWith("SET") && what.contains("GL")) {
+            if((what.startsWith("SET")||what.startsWith("GET")) && what.contains("GL")) {
                 EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.CURRENT_LOCO_UNKNOWN));
             } else if(what.startsWith("GET") && what.contains("GA")) {
                 Log.d(LOG_TAG, "GET GA failed, need to init...");
@@ -162,10 +162,10 @@ public class SrcpService extends Service {
     }
 
     private void connect() {
-        Log.d(LOG_TAG, "connecting...");
         try {
             String server = (String) storage.get("server");
             int port = (Integer) storage.get("port");
+            Log.d(LOG_TAG, "connecting to " + server + " at port " + port + "...");
 
             session = new SRCPSession(server, port);
             session.connect();
@@ -174,6 +174,11 @@ public class SrcpService extends Service {
             //session.getCommandChannel().send("SET 1 POWER ON");
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.CONNECTED));
         } catch (SRCPException e) {
+            try {
+                session.disconnect();
+            } catch (SRCPException e1) {
+                Log.e(LOG_TAG, "exception on disconnect", e);
+            }
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.DISCONNECTED));
             Log.e(LOG_TAG, "exception", e);
         }
