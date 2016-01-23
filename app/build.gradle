@@ -1,15 +1,15 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 22
     buildToolsVersion "19.1.0"
 
     defaultConfig {
         applicationId "de.ludetis.android.signalbox"
         minSdkVersion 15
-        targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion 22
+        versionCode 11
+        versionName "1.1"
     }
     buildTypes {
         release {
@@ -25,4 +25,5 @@ dependencies {
     compile files('libs/log4j-1.2.11.jar')
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'org.mapdb:mapdb:1.0.7'
+    compile 'com.google.code.gson:gson:2.3.1'
 }

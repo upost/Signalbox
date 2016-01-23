@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,15 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -73,7 +83,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        storage = new MapDbStorage("signalbox1");
+
+        storage = new MapDbStorage(SrcpService.DB_FILENAME);
+
+        checkForExportFile(storage);
 
         locoManager = new LocoManager(storage);
 
@@ -106,6 +119,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             l.initSent=false;
         }
     }
+
+
 
     private void showLocoList() {
         findViewById(R.id.chooser).setVisibility(View.VISIBLE);
@@ -153,6 +168,69 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
         checkPower();
 
+        // TODO add an export function somewhere.
+        //export();
+
+    }
+
+    private void checkForExportFile(MapStorage storage) {
+        File file = new File(Environment.getExternalStorageDirectory(), "signalbox.json");
+        if(file.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                try {
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+
+                    while (line != null) {
+                        sb.append(line);
+                        sb.append("\n");
+                        line = br.readLine();
+                    }
+
+                    Gson gson = new Gson();
+                    Export export = gson.fromJson(sb.toString(), Export.class);
+                    storage.put("server", export.server);
+                    storage.put("port", export.port);
+                    storage.put("locos2", export.locos);
+                    storage.put("layout", export.layout);
+                    storage.flush();
+
+                } finally {
+                    br.close();
+                }
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "ioexception during export",e);
+            }
+        }
+    }
+
+    class Export {
+        String server;
+        int port;
+        ArrayList<Loco> locos;
+        ArrayList<Segment> layout;
+    }
+
+    private void export() {
+        Gson gson = new Gson();
+        JsonObject o = new JsonObject();
+        o.addProperty("server", server);
+        o.addProperty("port", port);
+        o.add("layout", gson.toJsonTree(layout));
+        o.add("locos", gson.toJsonTree(locoManager.getLocoList()));
+        String export = o.toString();
+        File file = new File(Environment.getExternalStorageDirectory(), "signalbox.json");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+            fos.write(export.getBytes());
+
+            fos.close();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "ioexception during export",e);
+        }
 
     }
 
