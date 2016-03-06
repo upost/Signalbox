@@ -78,10 +78,13 @@ public class LocoDialog extends Dialog {
         findViewById(R.id.choose).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                //startActivityForResult(i, CHOOSE_IMAGE);
+                //Intent intent = new Intent();
                 intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                activity.startActivityForResult(Intent.createChooser(intent, null), PICK_IMAGE);
+                //intent.setAction(Intent.ACTION_GET_CONTENT);
+                //activity.startActivityForResult(Intent.createChooser(intent, null), PICK_IMAGE);
+                activity.startActivityForResult(intent,PICK_IMAGE);
             }
         });
         EventBus.getDefault().register(this);
