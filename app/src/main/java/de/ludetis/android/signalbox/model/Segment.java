@@ -12,11 +12,13 @@ public class Segment implements Serializable {
 
     public enum Type {EMPTY, STRAIGHT, CURVE_UP, CURVE_DOWN, UP_CURVE, DOWN_CURVE, ACROSS_UP, ACROSS_DOWN,
         SWITCH_UP, SWITCH_DOWN, UP_SWITCH, DOWN_SWITCH, MARKER, STRAIGHT_MARKER, SWITCHS_DOWN, DOWN_SWITCHS, SWITCHS_UP, UP_SWITCHS,
-    STRAIGHT_PLATFORM_BELOW, STRAIGHT_PLATFORM_ABOVE, BUMPER_LEFT, BUMPER_RIGHT };
+    STRAIGHT_PLATFORM_BELOW, STRAIGHT_PLATFORM_ABOVE, BUMPER_LEFT, BUMPER_RIGHT, SEMAPHORE_TOP, SEMAPHORE_BOTTOM
+    };
 
     public static final Type[] SWITCH_TYPES = {Type.SWITCH_DOWN, Type.SWITCH_UP, Type.UP_SWITCH, Type.DOWN_SWITCH,
     Type.SWITCHS_DOWN, Type.SWITCHS_UP, Type.UP_SWITCHS, Type.DOWN_SWITCHS};
     public static final Type[] EDIT_TYPES = { Type.MARKER, Type.STRAIGHT_MARKER };
+    public static final Type[] SEMAPHORE_TYPES = { Type.SEMAPHORE_BOTTOM, Type.SEMAPHORE_TOP};
 
     private Type type = Type.EMPTY;
     private String id;
@@ -68,6 +70,10 @@ public class Segment implements Serializable {
 
     public boolean isSwitch() {
         return Arrays.asList(SWITCH_TYPES).contains(type);
+    }
+
+    public boolean isSemaphore() {
+        return Arrays.asList(SEMAPHORE_TYPES).contains(type);
     }
 
     public boolean isEditable() {

@@ -9,4 +9,5 @@
         android:id="@+id/image"
         android:src="@drawable/loco_218r"
         android:layout_gravity="center_horizontal" />
+
 </FrameLayout>

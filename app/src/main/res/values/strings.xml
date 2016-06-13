@@ -37,5 +37,6 @@
     <string name="error">error occured</string>
     <string name="connected">connected</string>
     <string name="disconnected">disconnected</string>
+    <string name="cancel">cancel</string>
 
 </resources>

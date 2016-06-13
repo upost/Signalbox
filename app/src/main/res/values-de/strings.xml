@@ -29,4 +29,5 @@
     <string name="choose">wählen...</string>
     <string name="connecting">Verbinde mit Server...</string>
     <string name="error">Leider ist ein Fehler aufgetreten.</string>
+    <string name="cancel">Abbrechen</string>
 </resources>

@@ -22,7 +22,9 @@ public class SegmentView extends View {
     private Paint greyStroke = new Paint();
     private Paint greyFill = new Paint();
 	private Paint black = new Paint();
-    private Paint fontPaint = new Paint();
+    private Paint blackFill = new Paint();
+    private Paint red = new Paint();
+//    private Paint fontPaint = new Paint();
     private Paint fontPaintLarge = new Paint();
 	private Paint green = new Paint();
 	private float scale;
@@ -49,17 +51,21 @@ public class SegmentView extends View {
 		
 		white.setARGB(255,255,255,255);
 		white.setStyle(Style.FILL);
-		
-		black.setARGB(255,0,0,0);
-		black.setStyle(Style.STROKE);
-		black.setStrokeWidth(STROKE_WIDTH*scale);
-		black.setAntiAlias(true);
 
-        fontPaint.setColor(Color.BLACK);
-        fontPaint.setStyle(Style.FILL);
-        fontPaint.setTextSize(FONT_SIZE * scale);
-        fontPaint.setAntiAlias(true);
-        fontPaint.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+        black.setARGB(255,0,0,0);
+        black.setStyle(Style.STROKE);
+        black.setStrokeWidth(STROKE_WIDTH*scale);
+        black.setAntiAlias(true);
+
+        blackFill.setARGB(255,0,0,0);
+        blackFill.setStyle(Style.FILL_AND_STROKE);
+        blackFill.setAntiAlias(true);
+
+//        fontPaint.setColor(Color.BLACK);
+//        fontPaint.setStyle(Style.FILL);
+//        fontPaint.setTextSize(FONT_SIZE * scale);
+//        fontPaint.setAntiAlias(true);
+//        fontPaint.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
 
         fontPaintLarge.setColor(Color.BLACK);
         fontPaintLarge.setStyle(Style.FILL);
@@ -67,10 +73,15 @@ public class SegmentView extends View {
         fontPaintLarge.setAntiAlias(true);
         fontPaintLarge.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
 
-		green.setARGB(255,40,180,40);
-		green.setStyle(Style.STROKE);
-		green.setStrokeWidth(STROKE_WIDTH*scale);
-		green.setAntiAlias(true);
+        green.setARGB(255,40,180,40);
+        green.setStyle(Style.STROKE);
+        green.setStrokeWidth(STROKE_WIDTH*scale);
+        green.setAntiAlias(true);
+
+        red.setARGB(255,160,40,40);
+        red.setStyle(Style.STROKE);
+        red.setStrokeWidth(STROKE_WIDTH*scale);
+        red.setAntiAlias(true);
 
         greyStroke.setARGB(255, 180, 180, 180);
         greyStroke.setStyle(Style.STROKE);
@@ -98,6 +109,8 @@ public class SegmentView extends View {
                 case STRAIGHT_PLATFORM_ABOVE:
                 case STRAIGHT_PLATFORM_BELOW:
                 case STRAIGHT_MARKER:
+                case SEMAPHORE_BOTTOM:
+                case SEMAPHORE_TOP:
                 case STRAIGHT:
                     canvas.drawLine(0, h / 2, w - 1, h / 2, black);
                     break;
@@ -197,7 +210,25 @@ public class SegmentView extends View {
                     if (segment.getBus() > 0 && segment.getAddress() > 0)
                         display = segment.getBus() + ":" + segment.getAddress();
                 }
-                canvas.drawText(display, w / 2, h / 4, fontPaint);
+                canvas.drawText(display, w / 2, h / 4, fontPaintLarge);
+            }
+
+            // semaphore
+            if (segment.isSemaphore()) {
+                float dh = h/4 + (segment.getType()== Segment.Type.SEMAPHORE_TOP ? 0 : h/2);
+                float sl = w/4; float sh = h/6;
+                canvas.drawRect(w/2-sl/2, dh-sh, w/2+sl/2, dh+sh, blackFill );
+                canvas.drawCircle(w/2-sl/4, dh, sh/4, segment.getState()==0 ? red : greyFill);
+                canvas.drawCircle(w/2+sl/4, dh, sh/4, segment.getState()!=0 ? green : greyFill );
+
+                String display = "";
+                if (!TextUtils.isEmpty(segment.getId())) {
+                    display = segment.getId();
+                } else {
+                    if (segment.getBus() > 0 && segment.getAddress() > 0)
+                        display = segment.getBus() + ":" + segment.getAddress();
+                }
+                canvas.drawText(display, w / 2, h-dh, fontPaintLarge);
             }
         }
 

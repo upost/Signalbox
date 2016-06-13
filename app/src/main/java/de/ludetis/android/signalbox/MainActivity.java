@@ -101,6 +101,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         findViewById(R.id.edit).setOnClickListener(this);
         findViewById(R.id.loco_image).setOnClickListener(this);
         findViewById(R.id.loco_image).setOnLongClickListener(this);
+        findViewById(R.id.close_controller).setOnClickListener(this);
 
         findViewById(R.id.directionBack).setOnClickListener(this);
         findViewById(R.id.directionForward).setOnClickListener(this);
@@ -196,6 +197,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     storage.put("layout", export.layout);
                     storage.flush();
 
+                    Log.d(LOG_TAG, "imported from signalbox.json");
+
                 } finally {
                     br.close();
                 }
@@ -248,7 +251,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 @Override
                 public void onDataConfirmed(int w, int h) {
                     layout = LayoutFactory.create(w, h);
-                    storage.put("layout", layout);
+                    storage.put(LAYOUT, layout);
                     storage.flush();
                     Log.d(LOG_TAG, "created layout");
                     fillContainer();
@@ -256,7 +259,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             });
             d.show();
             layout = LayoutFactory.createDemo();
-            storage.put("layout", layout);
+            storage.put(LAYOUT, layout);
             storage.flush();
             fillContainer();
         } else {
@@ -288,7 +291,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private void wireSegmentViewClickListener(SegmentView segmentView) {
 
-        if(segmentView.getSegment().isSwitch()) {
+        if(segmentView.getSegment().isSwitch() || segmentView.getSegment().isSemaphore()) {
             segmentView.setOnClickListener(switchListener);
             segmentView.setOnLongClickListener(editSwitchListener);
         } else {
@@ -407,6 +410,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 });
                 break;
             case R.id.loco_image:
+            case R.id.close_controller:
                 showLocoList();
                 break;
         }
@@ -478,9 +482,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         if(edit) {
 //
         } else {
-            Log.d(LOG_TAG, "saving layout");
-            storage.put("layout", layout);
+            storage.put(LAYOUT, layout);
             storage.flush();
+            Log.d(LOG_TAG, "saved layout");
+
         }
 
     }
@@ -623,7 +628,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         public boolean onLongClick(View v) {
             if(v instanceof SegmentView) {
                 SegmentView sv = (SegmentView) v;
-                if(sv.getSegment().isSwitch()) {
+                if(sv.getSegment().isSwitch() || sv.getSegment().isSemaphore()) {
                     editSegmentSettings(sv);
                     return true;
                 }
@@ -695,7 +700,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             @Override
             public void onSegmentSettingChanged(Segment s) {
                 segmentView.invalidate();
-                storage.put("layout", layout);
+                storage.put(LAYOUT, layout);
                 storage.flush();
             }
 

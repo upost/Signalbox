@@ -170,15 +170,14 @@ public class SrcpService extends Service {
 
             session = new SRCPSession(server, port);
             session.connect();
-            //session.getCommandChannel().send("SET PROTOCOL SRCP 0.8.3");
 
-            //session.getCommandChannel().send("SET 1 POWER ON");
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.CONNECTED));
         } catch (SRCPException e) {
             try {
                 session.disconnect();
+                session=null;
             } catch (SRCPException e1) {
-                Log.e(LOG_TAG, "exception on disconnect", e);
+                Log.e(LOG_TAG, "exception on disconnect", e1);
             }
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.DISCONNECTED));
             Log.e(LOG_TAG, "exception", e);

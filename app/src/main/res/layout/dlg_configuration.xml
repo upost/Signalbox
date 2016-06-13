@@ -49,12 +49,21 @@
         android:imeOptions="actionDone"
         android:singleLine="true"
         android:id="@+id/server_port"/>
-
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
+        android:layout_marginRight="2dp"
+        android:id="@+id/cancel"
+        android:text="@string/cancel"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/save"
         android:text="@string/save"/>
+    </LinearLayout>
 </LinearLayout>
     </FrameLayout>

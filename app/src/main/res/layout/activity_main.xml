@@ -128,12 +128,23 @@
             android:layout_height="match_parent"
             android:layout_gravity="bottom|center_horizontal"
             android:orientation="vertical">
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
             <ImageView
                 android:layout_width="125dp"
                 android:layout_height="80dp"
                 android:padding="1dp"
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/loco_image"/>
+                <ImageView
+                    android:id="@+id/close_controller"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/cross"
+                    android:layout_gravity="right|top"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

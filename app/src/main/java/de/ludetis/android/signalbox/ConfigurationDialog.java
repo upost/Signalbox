@@ -30,12 +30,16 @@ public class ConfigurationDialog extends Dialog implements View.OnClickListener 
         etServerPort    = (EditText) findViewById(R.id.server_port);
         etServerPort.setText(Integer.toString(port));
         findViewById(R.id.save).setOnClickListener(this);
+        findViewById(R.id.cancel).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.save) {
             listener.onConfigurationChanged(etServerAddress.getText().toString(), Integer.parseInt(etServerPort.getText().toString()));
+            dismiss();
+        }
+        if(v.getId()==R.id.cancel) {
             dismiss();
         }
     }

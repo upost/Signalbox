@@ -32,6 +32,7 @@ public class SegmentSettingDialog extends Dialog implements View.OnClickListener
         setContentView(R.layout.dlg_segment_setting);
         findViewById(R.id.save).setOnClickListener(this);
         findViewById(R.id.test).setOnClickListener(this);
+        findViewById(R.id.cancel).setOnClickListener(this);
         etId = (EditText) findViewById(R.id.id);
         etBus = (EditText) findViewById(R.id.bus);
         etAddress = (EditText) findViewById(R.id.address);
@@ -60,6 +61,9 @@ public class SegmentSettingDialog extends Dialog implements View.OnClickListener
             segment.setAddress(address);
             segment.setBus(bus);
             listener.onSegmentSettingChanged(segment);
+            dismiss();
+        }
+        if(v.getId()==R.id.cancel) {
             dismiss();
         }
 
