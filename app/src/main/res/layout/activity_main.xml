@@ -203,6 +203,38 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <Button
+                    android:id="@+id/powerDown"
+                    android:layout_width="@dimen/smallbutton_size"
+                    android:layout_height="@dimen/smallbutton_size"
+                    android:padding="0dp" android:textSize="28sp"
+                    android:text="-" android:textStyle="bold"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:id="@+id/powerLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/smallbutton_size"
+                    android:padding="0dp" android:text="0" android:textSize="28sp"
+                    android:textAlignment="center"
+                     />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <Button
+                    android:id="@+id/powerUp"
+                    android:layout_width="@dimen/smallbutton_size"
+                    android:layout_height="@dimen/smallbutton_size"
+                    android:padding="0dp" android:textSize="28sp"
+                    android:text="+" android:textStyle="bold"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
                     android:id="@+id/directionBack"
                     android:layout_width="@dimen/smallbutton_size"
                     android:layout_height="@dimen/smallbutton_size"
@@ -210,8 +242,9 @@
                     android:text="←" android:textStyle="bold"/>
                 <Button
                     android:id="@+id/stop"
-                    android:layout_width="@dimen/smallbutton_size"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/smallbutton_size"
+                    android:layout_weight="1"
                     android:padding="0dp" android:text="0" android:textSize="28sp"
                     android:textColor="@android:color/holo_red_light" />
                 <Button

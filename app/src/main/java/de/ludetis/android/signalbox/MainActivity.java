@@ -18,8 +18,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -77,7 +77,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private boolean connected;
     private boolean power;
     private ImageButton buttonPower,buttonConnection;
-//    private Loco currentloco = new Loco(6,0,new int[5],"loco_260r");
+    private VerticalSeekBar seekBar;
+    private TextView speedDisplay;
+    //    private Loco currentloco = new Loco(6,0,new int[5],"loco_260r");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,13 +107,19 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
         findViewById(R.id.directionBack).setOnClickListener(this);
         findViewById(R.id.directionForward).setOnClickListener(this);
+        findViewById(R.id.powerDown).setOnClickListener(this);
+        findViewById(R.id.powerUp).setOnClickListener(this);
+
         findViewById(R.id.stop).setOnClickListener(this);
         findViewById(R.id.function0).setOnClickListener(this);
         findViewById(R.id.function1).setOnClickListener(this);
         findViewById(R.id.function2).setOnClickListener(this);
         findViewById(R.id.function3).setOnClickListener(this);
         findViewById(R.id.function4).setOnClickListener(this);
-        ((VerticalSeekBar)findViewById(R.id.speedControl)).setOnSeekBarChangeListener(this);
+        seekBar = ((VerticalSeekBar) findViewById(R.id.speedControl));
+        seekBar.setOnSeekBarChangeListener(this);
+        speedDisplay = (TextView) findViewById(R.id.powerLevel);
+        speedDisplay.setText("");
 
         startService(new Intent(this, SrcpService.class));
 
@@ -395,6 +403,20 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     sendLocoData(currentloco);
                 }
                 break;
+            case R.id.powerDown:
+                if(connected && currentloco.speed>0) {
+                    currentloco.speed--;
+                    sendLocoData(currentloco);
+                    updateController();
+                }
+                break;
+            case R.id.powerUp:
+                if(connected && currentloco.speed<seekBar.getMax()) {
+                    currentloco.speed++;
+                    sendLocoData(currentloco);
+                    updateController();
+                }
+                break;
             case R.id.stop:
                 emergencyStop();
                 break;
@@ -424,7 +446,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         (findViewById(R.id.function4)).setBackgroundColor(currentloco.function[4] > 0 ? COLOR_SET : COLOR_NOTSET);
         (findViewById(R.id.directionForward)).setBackgroundColor( currentloco.direction==0 ? COLOR_SET : COLOR_NOTSET );
         (findViewById(R.id.directionBack)).setBackgroundColor( currentloco.direction==1 ? COLOR_SET : COLOR_NOTSET );
-        ((ProgressBar)findViewById(R.id.speedControl)).setProgress(currentloco.speed);
+        seekBar.setProgress(currentloco.speed);
+        speedDisplay.setText(Integer.toString(currentloco.speed));
     }
 
     private void showLocoDialog(Loco l, LocoDialog.OnDataConfirmedListener listener) {
@@ -443,7 +466,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void stopLoco() {
-        ((VerticalSeekBar)findViewById(R.id.speedControl)).setProgress(0);
+        seekBar.setProgress(0);
     }
 
     private void configure() {
@@ -568,6 +591,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             currentloco.speed=speed;
             sendLocoData(currentloco);
             lastProgressChanged=System.currentTimeMillis();
+            updateController();
         }
     }
 
@@ -579,6 +603,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     public void emergencyStop() {
         sendSetGenericLocoCommand(currentloco.getBus(), currentloco.address, 2, 0, 100, currentloco.function);
         stopLoco();
+        updateController();
     }
 
     @Override
