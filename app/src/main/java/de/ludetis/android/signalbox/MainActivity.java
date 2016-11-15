@@ -85,7 +85,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         storage = new MapDbStorage(SrcpService.DB_FILENAME);
 
         checkForExportFile(storage);
@@ -154,7 +153,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         findViewById(R.id.controller).setVisibility(View.VISIBLE);
         ((ImageView)findViewById(R.id.loco_image)).setImageURI(Uri.parse(loco.image));
         // get current values
-        sendGetGenericLocoCommand(1, loco);
+        sendGetGenericLocoCommand(1, loco.address);
         updateController();
     }
 
@@ -299,7 +298,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private void wireSegmentViewClickListener(SegmentView segmentView) {
 
-        if(segmentView.getSegment().isSwitch() || segmentView.getSegment().isSemaphore()) {
+        if(segmentView.getSegment().isSwitch() || segmentView.getSegment().isSemaphore()
+                || segmentView.getSegment().isGenericAccessory() || segmentView.getSegment().isGenericFunction())  {
             segmentView.setOnClickListener(switchListener);
             segmentView.setOnLongClickListener(editSwitchListener);
         } else {
@@ -537,6 +537,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private void sendSetGenericAccessoryCommand(int bus, int address, int port) {
         send("SET " + bus + " GA " + address + " " + port + " 1 100"); // format: SET <bus> GA <addr> <port> <value> <delay>
     }
+    private void sendSetGenericAccessoryCommand(int bus, int address, int port, int value) {
+        send("SET " + bus + " GA " + address + " " + port + " "+value+" 100"); // format: SET <bus> GA <addr> <port> <value> <delay>
+    }
 
     private void sendInitGenericAccessoryCommand(int bus, int address) {
         send("INIT " + bus + " GA " + address + " N");
@@ -566,22 +569,23 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         send("SET "+bus+" GL "+address+" "+direction + " "+speed + " " +maxSpeed+" " +fu);
     }
 
-    private void sendGetGenericLocoCommand(int bus, Loco loco) {
+    private void sendGetGenericLocoCommand(int bus, int address) {
 //        if(!loco.initSent)
 //            sendInitGenericLocoCommand(bus,loco.address, SPEED_STEPS,5);
-        Log.d(LOG_TAG, "sending get gl for " + loco.address);
-        send("GET "+bus+" GL " + loco.address);
+        Log.d(LOG_TAG, "sending get gl for " + address);
+        send("GET "+bus+" GL " + address);
     }
 
     private void sendInitGenericLocoCommand(int bus, int address, int speedSteps, int functions) {
         send("INIT "+bus+" GL "+address+" N 1 "+speedSteps+" "+functions);
-        currentloco.initSent=true;
+
     }
 
     private void initCurrentLoco() {
         if(currentloco!=null) {
             Log.d(LOG_TAG,"init current loco...");
             sendInitGenericLocoCommand(currentloco.getBus(), currentloco.address, SPEED_STEPS, 5);
+            currentloco.initSent=true;
         }
     }
 
@@ -640,7 +644,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     editSegment(sv);
                 } else {
                     if(connected) {
-                        switchSwitch(sv.getSegment());
+                        if(sv.getSegment().isGenericFunction()) {
+                            showFunctionDecoderDlg(sv);
+                        } else {
+                            switchSwitch(sv.getSegment());
+                        }
                         sv.invalidate();
                     }
                 }
@@ -648,12 +656,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         }
     }
 
+
+
     private class EditSwitchListener implements View.OnLongClickListener {
         @Override
         public boolean onLongClick(View v) {
             if(v instanceof SegmentView) {
                 SegmentView sv = (SegmentView) v;
-                if(sv.getSegment().isSwitch() || sv.getSegment().isSemaphore()) {
+                if(sv.getSegment().isSwitch() || sv.getSegment().isSemaphore() || sv.getSegment().isGenericAccessory() || sv.getSegment().isGenericFunction()) {
                     editSegmentSettings(sv);
                     return true;
                 }
@@ -688,6 +698,20 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         dlg.show();
     }
 
+    private void showFunctionDecoderDlg(final SegmentView sv) {
+        FunctionDecoderDialog dlg = new FunctionDecoderDialog(this, sv, new FunctionDecoderDialog.OnFunctionChangedListener() {
+            @Override
+            public void onFunctionChanged(SegmentView segmentView, int function, boolean value) {
+                segmentView.invalidate();
+                Segment segment = segmentView.getSegment();
+                Log.i(LOG_TAG, "switching " + segment.getId() + " function " + function + " to " + value);
+                sendInitGenericLocoCommand(segment.getBus(), segment.getAddress(), SPEED_STEPS, segment.function.length);
+                sendSetGenericLocoCommand(segment.getBus(), segment.getAddress(),0,0,0,segment.function);
+                //sendSetGenericAccessoryCommand(segment.getBus(), segment.getAddress(), function, value?1:0);
+            }
+        });
+        dlg.show();
+    }
 
     private class SimpleListener implements View.OnClickListener {
         @Override
@@ -753,12 +777,25 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     public void onEventMainThread(SrcpLocoInfoMessage msg) {
+        Segment s = findSegment(msg.getBus(), msg.getAddress());
+        if(s!=null) {
+            // function decoder
+            s.function = msg.getFunctions();
+        } else
+
         if(currentloco!=null && msg.getAddress()==currentloco.address) {
             currentloco.direction = msg.getDirection();
             currentloco.speed = msg.getSpeed();
             currentloco.function = msg.getFunctions();
             updateController();
         }
+    }
+
+    private Segment findSegment(int bus, int address) {
+        for(Segment s : layout) {
+            if(s.getBus()==bus && s.getAddress()==address) return  s;
+        }
+        return null;
     }
 
     public void onEventMainThread(SrcpGenericAccessoryInfoMessage msg) {
@@ -802,6 +839,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 buttonConnection.setVisibility(View.VISIBLE);
                 buttonPower.setImageResource(R.drawable.power_on);
                 checkGenericAccessorySettings();
+                checkFunctionDecderSettings();
                 break;
             case POWER_OFF:
                 power=false;
@@ -819,6 +857,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             if(s.isSwitch()) {
                 sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 0);
                 sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 1);
+            }
+        }
+    }
+
+    private void checkFunctionDecderSettings() {
+        for(Segment s : layout) {
+            if(s.isGenericFunction()) {
+                sendGetGenericLocoCommand(s.getBus(), s.getAddress());
             }
         }
     }

@@ -9,16 +9,22 @@ import java.util.Arrays;
 public class Segment implements Serializable {
 
     static final long serialVersionUID =-3402530285538005618L;
+    public static final int FUNCTION_DECODER_FUNCTIONS = 8;
+
+
 
     public enum Type {EMPTY, STRAIGHT, CURVE_UP, CURVE_DOWN, UP_CURVE, DOWN_CURVE, ACROSS_UP, ACROSS_DOWN,
         SWITCH_UP, SWITCH_DOWN, UP_SWITCH, DOWN_SWITCH, MARKER, STRAIGHT_MARKER, SWITCHS_DOWN, DOWN_SWITCHS, SWITCHS_UP, UP_SWITCHS,
-    STRAIGHT_PLATFORM_BELOW, STRAIGHT_PLATFORM_ABOVE, BUMPER_LEFT, BUMPER_RIGHT, SEMAPHORE_TOP, SEMAPHORE_BOTTOM
+    STRAIGHT_PLATFORM_BELOW, STRAIGHT_PLATFORM_ABOVE, BUMPER_LEFT, BUMPER_RIGHT, SEMAPHORE_TOP, SEMAPHORE_BOTTOM,
+        GENERIC_ON_OFF_SWITCH, GENERIC_FUNCTION
     };
 
     public static final Type[] SWITCH_TYPES = {Type.SWITCH_DOWN, Type.SWITCH_UP, Type.UP_SWITCH, Type.DOWN_SWITCH,
     Type.SWITCHS_DOWN, Type.SWITCHS_UP, Type.UP_SWITCHS, Type.DOWN_SWITCHS};
     public static final Type[] EDIT_TYPES = { Type.MARKER, Type.STRAIGHT_MARKER };
     public static final Type[] SEMAPHORE_TYPES = { Type.SEMAPHORE_BOTTOM, Type.SEMAPHORE_TOP};
+    public static final Type[] GENERIC_ACCESSORY_TYPES = {Type.GENERIC_ON_OFF_SWITCH };
+    public static final Type[] GENERIC_FUNCTION_TYPES = { Type.GENERIC_FUNCTION };
 
     private Type type = Type.EMPTY;
     private String id;
@@ -26,6 +32,11 @@ public class Segment implements Serializable {
     private int address;
     private int bus=1;
     private int state=0;
+    public int[] function;
+
+    public Segment() {
+        function = new int[FUNCTION_DECODER_FUNCTIONS];
+    }
 
     public Segment(Type type, String id, int x, int y, int address, int bus) {
         this.type = type;
@@ -34,6 +45,7 @@ public class Segment implements Serializable {
         this.y = y;
         this.address = address;
         this.bus = bus;
+        function = new int[FUNCTION_DECODER_FUNCTIONS];
     }
 
     public String getId() {
@@ -80,6 +92,9 @@ public class Segment implements Serializable {
         return Arrays.asList(EDIT_TYPES).contains(type);
     }
 
+    public boolean isGenericAccessory() { return Arrays.asList(GENERIC_ACCESSORY_TYPES).contains(type); }
+    public boolean isGenericFunction() { return Arrays.asList(GENERIC_FUNCTION_TYPES).contains(type); }
+
     public int getY() {
         return y;
     }
@@ -104,5 +119,19 @@ public class Segment implements Serializable {
         this.state = state;
     }
 
+    public boolean getFunctionValue(int i) {
+        if(function==null)  function = new int[FUNCTION_DECODER_FUNCTIONS];
+        return function[i]!=0;
+    }
+
+    public void setFunction(int i, boolean v) {
+        if(function==null)  function = new int[FUNCTION_DECODER_FUNCTIONS];
+        function[i] = v?1:0;
+    }
+
+    public int activateFunction(int i) {
+        function[i] = 1-function[i];
+        return function[i];
+    }
 
 }

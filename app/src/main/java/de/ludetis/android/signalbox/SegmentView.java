@@ -27,6 +27,7 @@ public class SegmentView extends View {
 //    private Paint fontPaint = new Paint();
     private Paint fontPaintLarge = new Paint();
 	private Paint green = new Paint();
+    private Paint greenFilled = new Paint();
 	private float scale;
 	private Segment segment;
 
@@ -77,6 +78,10 @@ public class SegmentView extends View {
         green.setStyle(Style.STROKE);
         green.setStrokeWidth(STROKE_WIDTH*scale);
         green.setAntiAlias(true);
+
+        greenFilled.setARGB(255,40,180,40);
+        greenFilled.setStyle(Style.FILL);
+        greenFilled.setAntiAlias(true);
 
         red.setARGB(255,160,40,40);
         red.setStyle(Style.STROKE);
@@ -219,7 +224,7 @@ public class SegmentView extends View {
                 float sl = w/4; float sh = h/6;
                 canvas.drawRect(w/2-sl/2, dh-sh, w/2+sl/2, dh+sh, blackFill );
                 canvas.drawCircle(w/2-sl/4, dh, sh/4, segment.getState()==0 ? red : greyFill);
-                canvas.drawCircle(w/2+sl/4, dh, sh/4, segment.getState()!=0 ? green : greyFill );
+                canvas.drawCircle(w/2+sl/4, dh, sh/4, segment.getState()!=0 ? greenFilled : greyFill );
 
                 String display = "";
                 if (!TextUtils.isEmpty(segment.getId())) {
@@ -229,6 +234,46 @@ public class SegmentView extends View {
                         display = segment.getBus() + ":" + segment.getAddress();
                 }
                 canvas.drawText(display, w / 2, h-dh, fontPaintLarge);
+            }
+
+            // generic accessory
+            if(segment.isGenericAccessory()) {
+                float dh = h/2;
+                float sl = h/6; float sh = h/6;
+                canvas.drawRect(w/2-sl, dh-sh, w/2+sl, dh+sh, blackFill );
+                canvas.drawCircle(w/2, dh, sh/2, segment.getState()==0 ? greyFill : greenFilled);
+
+                String display = "";
+                if (!TextUtils.isEmpty(segment.getId())) {
+                    display = segment.getId();
+                } else {
+                    if (segment.getBus() > 0 && segment.getAddress() > 0)
+                        display = segment.getBus() + ":" + segment.getAddress();
+                }
+                canvas.drawText(display, w / 2, h/4, fontPaintLarge);
+            }
+
+            // generic function
+            if(segment.isGenericFunction()) {
+                float dh = h/4;
+                float dw = h/6;
+
+                canvas.drawRect(dw, dh, w-dw, h-dh, blackFill );
+                float cd = (w-dw*2)/Segment.FUNCTION_DECODER_FUNCTIONS;
+                float r = h/12;
+
+                for(int i=0; i<Segment.FUNCTION_DECODER_FUNCTIONS; i++) {
+                    canvas.drawCircle(dw+cd*i+r+cd/8, h/2, r, segment.getFunctionValue(i) ?  greenFilled : greyFill);
+                }
+
+                String display = "";
+                if (!TextUtils.isEmpty(segment.getId())) {
+                    display = segment.getId();
+                } else {
+                    if (segment.getBus() > 0 && segment.getAddress() > 0)
+                        display = segment.getBus() + ":" + segment.getAddress();
+                }
+                canvas.drawText(display, dw, h/6, fontPaintLarge);
             }
         }
 
