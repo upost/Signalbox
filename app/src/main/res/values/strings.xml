@@ -38,5 +38,7 @@
     <string name="connected">connected</string>
     <string name="disconnected">disconnected</string>
     <string name="cancel">cancel</string>
+    <string name="no_connectivity">no connectivity</string>
+    <string name="connectivity_available">connectivity available</string>
 
 </resources>

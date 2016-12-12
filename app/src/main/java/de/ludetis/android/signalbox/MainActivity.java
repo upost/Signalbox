@@ -800,7 +800,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     public void onEventMainThread(SrcpGenericAccessoryInfoMessage msg) {
         if(!msg.isAvailable()) {
-
             sendInitGenericAccessoryCommand(msg.getBus(), msg.getAddress());
         } else {
             for(Segment s : layout) {
@@ -819,14 +818,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         if(progressDialog!=null && progressDialog.isShowing()) progressDialog.dismiss();
         switch(msg.status) {
             case  CONNECTED:
-                Toast.makeText(MainActivity.this, getString(R.string.connected), Toast.LENGTH_SHORT).show();
-                connected=true;
+                if(!connected) {
+                    Toast.makeText(MainActivity.this, getString(R.string.connected), Toast.LENGTH_SHORT).show();
+                    connected = true;
+                    for(Loco l : locoManager.getLocoList()) {
+                        l.initSent=false;
+                    }
+                    checkPower();
+                }
                 buttonConnection.setImageResource(R.drawable.connected);
                 buttonPower.setVisibility(View.VISIBLE);
-                for(Loco l : locoManager.getLocoList()) {
-                    l.initSent=false;
-                }
-                checkPower();
                 break;
             case DISCONNECTED:
                 Toast.makeText(MainActivity.this, getString(R.string.disconnected), Toast.LENGTH_SHORT).show();
@@ -836,7 +837,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 break;
             case POWER_ON:
                 power=true;
-                buttonConnection.setVisibility(View.VISIBLE);
+                buttonPower.setVisibility(View.VISIBLE);
                 buttonPower.setImageResource(R.drawable.power_on);
                 checkGenericAccessorySettings();
                 checkFunctionDecderSettings();
@@ -848,6 +849,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 break;
             case CURRENT_LOCO_UNKNOWN:
                 initCurrentLoco();
+                break;
+            case CONNECTIVITY_AVAIL:
+                Toast.makeText(MainActivity.this, getString(R.string.connectivity_available), Toast.LENGTH_SHORT).show();
+                buttonConnection.setEnabled(true);
+                break;
+            case CONNECTIVITY_LOST:
+                Toast.makeText(MainActivity.this, getString(R.string.no_connectivity), Toast.LENGTH_SHORT).show();
+                connected=false;
+                buttonConnection.setImageResource(R.drawable.disconnected);
+                buttonPower.setVisibility(View.INVISIBLE);
+                buttonConnection.setEnabled(false);
                 break;
         }
     }

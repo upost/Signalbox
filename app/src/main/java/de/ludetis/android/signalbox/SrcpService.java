@@ -1,7 +1,11 @@
 package de.ludetis.android.signalbox;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,7 +28,7 @@ import de.ludetis.android.storage.MapStorage;
 /**
  * Created by uwe on 08.06.15.
  */
-public class SrcpService extends Service {
+public class SrcpService extends Service  {
 
     public final static String DB_FILENAME="signalbox4";
     private static final String LOG_TAG = "SrcpService";
@@ -32,6 +36,7 @@ public class SrcpService extends Service {
     private static final long RETRY_DELAY_MS = 100;
     private SRCPSession session;
     private MapStorage storage;
+    private boolean connectivity;
 
 
     @Override
@@ -44,6 +49,13 @@ public class SrcpService extends Service {
         super.onCreate();
         storage = new MapDbStorage(DB_FILENAME);
         EventBus.getDefault().register(this);
+        registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                checkConnectivity();
+            }
+        }, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        checkConnectivity();
     }
 
     @Override
@@ -101,6 +113,8 @@ public class SrcpService extends Service {
             EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.ERROR));
             result=false;
         }
+        if(result)
+            EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.CONNECTED));
         return result;
     }
 
@@ -200,5 +214,22 @@ public class SrcpService extends Service {
         EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.DISCONNECTED));
 
 
+    }
+
+    private void checkConnectivity() {
+        boolean connectivityBefore=connectivity;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnectedOrConnecting()) {
+            connectivity=true;
+        } else {
+            connectivity=false;
+        }
+        if(connectivityBefore!=connectivity) {
+            EventBus.getDefault().post( new StatusMessage(connectivity? StatusMessage.Status.CONNECTIVITY_AVAIL : StatusMessage.Status.CONNECTIVITY_LOST ));
+        }
+    }
+
+    public boolean hasConnectivity() {
+        return connectivity;
     }
 }

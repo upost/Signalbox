@@ -8,8 +8,8 @@ android {
         applicationId "de.ludetis.android.signalbox"
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 14
-        versionName "1.4"
+        versionCode 15
+        versionName "1.5"
     }
     buildTypes {
         release {

@@ -9,7 +9,7 @@ public class StatusMessage {
         this.status = status;
     }
 
-    public enum Status {CONNECTED,DISCONNECTED,POWER_ON,POWER_OFF, CURRENT_LOCO_UNKNOWN, ERROR};
+    public enum Status {CONNECTED,DISCONNECTED,POWER_ON,POWER_OFF, CURRENT_LOCO_UNKNOWN, ERROR, CONNECTIVITY_LOST, CONNECTIVITY_AVAIL};
 
     public final Status status;
 
