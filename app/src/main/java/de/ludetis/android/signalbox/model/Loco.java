@@ -1,6 +1,7 @@
 package de.ludetis.android.signalbox.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -9,6 +10,8 @@ import java.util.UUID;
 public class Loco implements Serializable {
 
     static final long serialVersionUID =-3402530285538002228L;
+    public static final int FUNCTION_MAX = 10;
+    private int[] functions;
 
     public Loco(int bus, int address, int direction, int[] function, String image) {
         this.bus = bus;
@@ -23,7 +26,7 @@ public class Loco implements Serializable {
     private int bus;
     public int address;
     public int direction;
-    public int[] function;
+    private int[] function;
     public String image;
     public boolean initSent;
     public int speed;
@@ -31,7 +34,18 @@ public class Loco implements Serializable {
     public void reset() {
         initSent=false;
         speed=0;
-        function = new int[] {0,0,0,0,0};
+        function = new int[FUNCTION_MAX];
+    }
+
+    public int[] getFunctions() {
+        return Arrays.copyOf(function,function.length);
+    }
+
+    public int getFunction(int i) {
+        if(i>=function.length) {
+            function = Arrays.copyOf(function,FUNCTION_MAX);
+        }
+        return function[i];
     }
 
     public int activateFunction(int i) {
@@ -61,5 +75,9 @@ public class Loco implements Serializable {
 
     public void setBus(int bus) {
         this.bus = bus;
+    }
+
+    public void setFunctions(int[] functions) {
+        this.functions = functions;
     }
 }

@@ -12,7 +12,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Vibrator;
 import android.util.Log;
+import android.view.SoundEffectConstants;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -50,6 +52,8 @@ import de.ludetis.android.view.VerticalSeekBar;
 
 public class MainActivity extends Activity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnLongClickListener {
 
+    private static final int[] FUNCTION_BUTTONS = new int[] {R.id.function0, R.id.function1, R.id.function2, R.id.function3,
+            R.id.function4,R.id.function5};
     private static final String LOG_TAG = "SRCPClient";
     private static final int SEGMENT_WIDTH = 200;
     private static final int SEGMENT_HEIGHT = 100;
@@ -79,6 +83,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private ImageButton buttonPower,buttonConnection;
     private VerticalSeekBar seekBar;
     private TextView speedDisplay;
+    private Vibrator vibrateSvc;
     //    private Loco currentloco = new Loco(6,0,new int[5],"loco_260r");
 
     @Override
@@ -86,6 +91,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         super.onCreate(savedInstanceState);
 
         storage = new MapDbStorage(SrcpService.DB_FILENAME);
+
+        vibrateSvc = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        if(!vibrateSvc.hasVibrator()) {
+            Log.d(LOG_TAG, "no vibrator!");
+        }
 
         checkForExportFile(storage);
 
@@ -110,11 +120,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         findViewById(R.id.powerUp).setOnClickListener(this);
 
         findViewById(R.id.stop).setOnClickListener(this);
-        findViewById(R.id.function0).setOnClickListener(this);
-        findViewById(R.id.function1).setOnClickListener(this);
-        findViewById(R.id.function2).setOnClickListener(this);
-        findViewById(R.id.function3).setOnClickListener(this);
-        findViewById(R.id.function4).setOnClickListener(this);
+        for(int r : FUNCTION_BUTTONS) {
+            findViewById(r).setOnClickListener(this);
+        }
         seekBar = ((VerticalSeekBar) findViewById(R.id.speedControl));
         seekBar.setOnSeekBarChangeListener(this);
         speedDisplay = (TextView) findViewById(R.id.powerLevel);
@@ -326,6 +334,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             showLocoController((Loco) v.getTag(R.id.TAGKEY_LOCO));
             return;
         }
+        for(int i =0; i<FUNCTION_BUTTONS.length; i++) {
+            if(v.getId()==FUNCTION_BUTTONS[i]) {
+                if(connected) {
+                    currentloco.activateFunction(i);
+                    updateController();
+                    sendLocoData(currentloco);
+                }
+            }
+        }
         switch (v.getId()) {
             case R.id.connection:
                 if(connected) {
@@ -351,41 +368,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 configure(); break;
             case R.id.edit:
                 toggleEdit();
-                break;
-            case R.id.function0:
-                if(connected) {
-                    currentloco.activateFunction(0);
-                    updateController();
-                    sendLocoData(currentloco);
-                }
-                break;
-            case R.id.function1:
-                if(connected) {
-                    currentloco.activateFunction(1);
-                    updateController();
-                    sendLocoData(currentloco);
-                }
-                break;
-            case R.id.function2:
-                if(connected) {
-                    currentloco.activateFunction(2);
-                    updateController();
-                    sendLocoData(currentloco);
-                }
-                break;
-            case R.id.function3:
-                if(connected) {
-                    currentloco.activateFunction(3);
-                    updateController();
-                    sendLocoData(currentloco);
-                }
-                break;
-            case R.id.function4:
-                if(connected) {
-                    currentloco.activateFunction(4);
-                    updateController();
-                    sendLocoData(currentloco);
-                }
                 break;
             case R.id.directionForward:
                 if(connected) {
@@ -421,7 +403,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 emergencyStop();
                 break;
             case R.id.add_loco:
-                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[5],"");
+                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[Loco.FUNCTION_MAX],"");
                 showLocoDialog(l, new LocoDialog.OnDataConfirmedListener() {
                     @Override
                     public void onDataConfirmed(Loco loco) {
@@ -439,11 +421,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void updateController() {
-        (findViewById(R.id.function0)).setBackgroundColor(currentloco.function[0]>0 ? COLOR_SET : COLOR_NOTSET);
-        (findViewById(R.id.function1)).setBackgroundColor(currentloco.function[1] > 0 ? COLOR_SET : COLOR_NOTSET);
-        (findViewById(R.id.function2)).setBackgroundColor(currentloco.function[2] > 0 ? COLOR_SET : COLOR_NOTSET);
-        (findViewById(R.id.function3)).setBackgroundColor(currentloco.function[3] > 0 ? COLOR_SET : COLOR_NOTSET);
-        (findViewById(R.id.function4)).setBackgroundColor(currentloco.function[4] > 0 ? COLOR_SET : COLOR_NOTSET);
+        for(int i =0; i<FUNCTION_BUTTONS.length; i++) {
+            (findViewById(FUNCTION_BUTTONS[i])).setBackgroundColor(currentloco.getFunction(i)>0 ? COLOR_SET : COLOR_NOTSET);
+        }
+
         (findViewById(R.id.directionForward)).setBackgroundColor( currentloco.direction==0 ? COLOR_SET : COLOR_NOTSET );
         (findViewById(R.id.directionBack)).setBackgroundColor( currentloco.direction==1 ? COLOR_SET : COLOR_NOTSET );
         seekBar.setProgress(currentloco.speed);
@@ -596,28 +577,41 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             sendLocoData(currentloco);
             lastProgressChanged=System.currentTimeMillis();
             updateController();
+            if(vibrateSvc.hasVibrator()) {
+                vibrateSvc.vibrate(50);
+            }
+            seekBar.playSoundEffect(SoundEffectConstants.CLICK);
+
         }
     }
 
     private void sendLocoData(Loco lo) {
-        sendSetGenericLocoCommand(lo.getBus(), lo.address, lo.direction, lo.speed, 100, lo.function);
+        sendSetGenericLocoCommand(lo.getBus(), lo.address, lo.direction, lo.speed, 100, lo.getFunctions());
 
     }
 
     public void emergencyStop() {
-        sendSetGenericLocoCommand(currentloco.getBus(), currentloco.address, 2, 0, 100, currentloco.function);
+        sendSetGenericLocoCommand(currentloco.getBus(), currentloco.address, 2, 0, 100, currentloco.getFunctions());
         stopLoco();
         updateController();
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        if(vibrateSvc.hasVibrator()) {
+            vibrateSvc.vibrate(100);
+        }
+        seekBar.playSoundEffect(SoundEffectConstants.CLICK);
+
 
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-
+//        if(vibrateSvc.hasVibrator()) {
+//            vibrateSvc.vibrate(200);
+//        }
+//        seekBar.playSoundEffect(SoundEffectConstants.CLICK);
     }
 
     @Override
@@ -786,7 +780,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         if(currentloco!=null && msg.getAddress()==currentloco.address) {
             currentloco.direction = msg.getDirection();
             currentloco.speed = msg.getSpeed();
-            currentloco.function = msg.getFunctions();
+            currentloco.setFunctions( msg.getFunctions() );
             updateController();
         }
     }

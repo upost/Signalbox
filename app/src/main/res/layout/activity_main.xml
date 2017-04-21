@@ -187,6 +187,12 @@
                         android:layout_height="@dimen/smallbutton_size"
                         android:padding="0dp"
                         android:text="F4"  />
+                    <Button
+                        android:id="@+id/function5"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F5"  />
                 </LinearLayout>
                 <de.ludetis.android.view.VerticalSeekBar
                     android:layout_width="wrap_content"
