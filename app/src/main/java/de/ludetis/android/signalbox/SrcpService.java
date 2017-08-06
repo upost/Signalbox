@@ -30,7 +30,7 @@ import de.ludetis.android.storage.MapStorage;
  */
 public class SrcpService extends Service  {
 
-    public final static String DB_FILENAME="signalbox4";
+    public final static String DB_FILENAME="signalbox5";
     private static final String LOG_TAG = "SrcpService";
     private static final int RETRIES = 1;
     private static final long RETRY_DELAY_MS = 100;

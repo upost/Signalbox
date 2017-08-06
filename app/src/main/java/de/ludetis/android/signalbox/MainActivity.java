@@ -5,8 +5,10 @@ package de.ludetis.android.signalbox;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -113,6 +115,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         findViewById(R.id.loco_image).setOnClickListener(this);
         findViewById(R.id.loco_image).setOnLongClickListener(this);
         findViewById(R.id.close_controller).setOnClickListener(this);
+        findViewById(R.id.remove_loco).setOnClickListener(this);
 
         findViewById(R.id.directionBack).setOnClickListener(this);
         findViewById(R.id.directionForward).setOnClickListener(this);
@@ -403,7 +406,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 emergencyStop();
                 break;
             case R.id.add_loco:
-                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[Loco.FUNCTION_MAX],"");
+                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[LocoManager.FUNCTION_MAX],"");
                 showLocoDialog(l, new LocoDialog.OnDataConfirmedListener() {
                     @Override
                     public void onDataConfirmed(Loco loco) {
@@ -413,11 +416,29 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     }
                 });
                 break;
+            case R.id.remove_loco:
+                showRemoveLocoQuestion();
+                break;
             case R.id.loco_image:
             case R.id.close_controller:
                 showLocoList();
                 break;
         }
+    }
+
+    private void showRemoveLocoQuestion() {
+        AlertDialog.Builder b = new AlertDialog.Builder(this).setTitle(R.string.stop)
+                .setMessage(R.string.really_remove)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        locoManager.removeLoco(currentloco);
+                        locoManager.saveAll();
+                        showLocoList();
+                    }
+                })
+                .setCancelable(true);
+        b.create().show();
     }
 
     private void updateController() {

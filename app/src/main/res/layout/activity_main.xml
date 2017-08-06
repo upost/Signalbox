@@ -140,10 +140,15 @@
                 android:id="@+id/loco_image"/>
                 <ImageView
                     android:id="@+id/close_controller"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/cross"
-                    android:layout_gravity="right|top"/>
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/left"
+                    android:layout_gravity="left|top"/><ImageView
+                android:id="@+id/remove_loco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/cross"
+                android:layout_gravity="right|top"/>
             </FrameLayout>
 
             <LinearLayout

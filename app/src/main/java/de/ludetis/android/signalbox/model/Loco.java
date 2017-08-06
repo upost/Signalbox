@@ -4,13 +4,15 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.UUID;
 
+import de.ludetis.android.signalbox.LocoManager;
+
 /**
  * Created by uwe on 08.06.15.
  */
 public class Loco implements Serializable {
 
     static final long serialVersionUID =-3402530285538002228L;
-    public static final int FUNCTION_MAX = 10;
+
     private int[] functions;
 
     public Loco(int bus, int address, int direction, int[] function, String image) {
@@ -30,11 +32,13 @@ public class Loco implements Serializable {
     public String image;
     public boolean initSent;
     public int speed;
+    public String dummy;
 
     public void reset() {
         initSent=false;
         speed=0;
-        function = new int[FUNCTION_MAX];
+        dummy="";
+        function = new int[LocoManager.FUNCTION_MAX];
     }
 
     public int[] getFunctions() {
@@ -43,7 +47,7 @@ public class Loco implements Serializable {
 
     public int getFunction(int i) {
         if(i>=function.length) {
-            function = Arrays.copyOf(function,FUNCTION_MAX);
+            function = Arrays.copyOf(function,LocoManager.FUNCTION_MAX);
         }
         return function[i];
     }
@@ -79,5 +83,13 @@ public class Loco implements Serializable {
 
     public void setFunctions(int[] functions) {
         this.functions = functions;
+    }
+
+    public String getDummy() {
+        return dummy;
+    }
+
+    public void setDummy(String dummy) {
+        this.dummy = dummy;
     }
 }

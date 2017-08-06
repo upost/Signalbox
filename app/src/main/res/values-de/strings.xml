@@ -30,4 +30,5 @@
     <string name="connecting">Verbinde mit Server...</string>
     <string name="error">Leider ist ein Fehler aufgetreten.</string>
     <string name="cancel">Abbrechen</string>
+    <string name="really_remove">Wirklich diese Lok löschen?</string>
 </resources>

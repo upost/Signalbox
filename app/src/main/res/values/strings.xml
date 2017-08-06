@@ -40,5 +40,6 @@
     <string name="cancel">cancel</string>
     <string name="no_connectivity">no connectivity</string>
     <string name="connectivity_available">connectivity available</string>
+    <string name="really_remove">Really remove this loco?</string>
 
 </resources>
