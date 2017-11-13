@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="mapdb-1.0.9">
+  <library name="org.mapdb:mapdb:1.0.9@jar">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.mapdb/mapdb/1.0.9/f8df5e15778eb3e88c03b77aca70c318c6b7c9d0/mapdb-1.0.9.jar!/" />
     </CLASSES>
