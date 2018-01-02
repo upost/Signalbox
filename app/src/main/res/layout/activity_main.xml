@@ -49,6 +49,8 @@
                 android:padding="@dimen/imagebutton_padding"
                 android:src="@drawable/disconnected"
                 android:scaleType="centerInside"/>
+
+
             <ImageButton
                 android:id="@+id/power"
                 android:layout_width="@dimen/imagebutton_width"
@@ -56,6 +58,13 @@
                 android:padding="@dimen/imagebutton_padding"
                 android:src="@drawable/power_off"
                 android:scaleType="centerInside"/>
+
+            <ImageButton
+                android:id="@+id/route_start"
+                android:layout_width="100dp"
+                android:layout_height="@dimen/imagebutton_height"
+                android:src="@drawable/route_off" />
+
 
             <ImageButton
                 android:id="@+id/configuration"
@@ -142,13 +151,8 @@
                     android:id="@+id/close_controller"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/left"
-                    android:layout_gravity="left|top"/><ImageView
-                android:id="@+id/remove_loco"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/cross"
-                android:layout_gravity="right|top"/>
+                    android:src="@drawable/cross"
+                    android:layout_gravity="left|top"/>
             </FrameLayout>
 
             <LinearLayout
@@ -206,6 +210,7 @@
                     android:background="@drawable/slider_bg"
                     android:layout_gravity="center_horizontal"
                     android:max="100"
+                    android:thumb="@drawable/seekbar_thumb"
                     android:id="@+id/speedControl" />
 
             </LinearLayout>

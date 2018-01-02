@@ -31,4 +31,11 @@
     <string name="error">Leider ist ein Fehler aufgetreten.</string>
     <string name="cancel">Abbrechen</string>
     <string name="really_remove">Wirklich diese Lok löschen?</string>
+    <string name="delete">Lok löschen</string>
+    <string name="tapRouteStart">Fahrstraße: Start antippen</string>
+    <string name="setRouteCancelled">Einstellen einer Fahrstraße abgebrochen</string>
+    <string name="tapRouteEnd">Fahrstraße: Ziel antippen</string>
+    <string name="setRouteComplete">Fahrstraße eingestellt</string>
+    <string name="noRouteFound">Keine Fahrstreße gefunden</string>
+
 </resources>

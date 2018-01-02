@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 import de.ludetis.android.signalbox.model.Loco;
@@ -53,6 +54,9 @@ import de.ludetis.android.view.VerticalSeekBar;
 
 
 public class MainActivity extends Activity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnLongClickListener {
+
+
+    enum RouteSetStepType { NONE, WAIT_START, WAIT_END };
 
     private static final int[] FUNCTION_BUTTONS = new int[] {R.id.function0, R.id.function1, R.id.function2, R.id.function3,
             R.id.function4,R.id.function5};
@@ -86,6 +90,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private VerticalSeekBar seekBar;
     private TextView speedDisplay;
     private Vibrator vibrateSvc;
+    private RouteSetStepType routeSetStep;
+    private Segment routeStart;
+
     //    private Loco currentloco = new Loco(6,0,new int[5],"loco_260r");
 
     @Override
@@ -115,7 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         findViewById(R.id.loco_image).setOnClickListener(this);
         findViewById(R.id.loco_image).setOnLongClickListener(this);
         findViewById(R.id.close_controller).setOnClickListener(this);
-        findViewById(R.id.remove_loco).setOnClickListener(this);
+        findViewById(R.id.route_start).setOnClickListener(this);
 
         findViewById(R.id.directionBack).setOnClickListener(this);
         findViewById(R.id.directionForward).setOnClickListener(this);
@@ -137,6 +144,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         for(Loco l : locoManager.getLocoList()) {
             l.initSent=false;
         }
+
+        routeSetStep = RouteSetStepType.NONE;
     }
 
 
@@ -310,7 +319,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private void wireSegmentViewClickListener(SegmentView segmentView) {
 
         if(segmentView.getSegment().isSwitch() || segmentView.getSegment().isSemaphore()
-                || segmentView.getSegment().isGenericAccessory() || segmentView.getSegment().isGenericFunction())  {
+                || segmentView.getSegment().isGenericAccessory() || segmentView.getSegment().isGenericFunction()
+                || segmentView.getSegment().isRoutePoint())  {
             segmentView.setOnClickListener(switchListener);
             segmentView.setOnLongClickListener(editSwitchListener);
         } else {
@@ -416,14 +426,26 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     }
                 });
                 break;
-            case R.id.remove_loco:
-                showRemoveLocoQuestion();
-                break;
             case R.id.loco_image:
             case R.id.close_controller:
                 showLocoList();
                 break;
+            case R.id.route_start:
+                if(routeSetStep==RouteSetStepType.NONE) {
+                    showToast(R.string.tapRouteStart);
+                    routeSetStep = RouteSetStepType.WAIT_START;
+                    ((ImageButton)findViewById(R.id.route_start)).setImageResource(R.drawable.route_wait);
+                } else {
+                    showToast(R.string.setRouteCancelled);
+                    routeSetStep = RouteSetStepType.NONE;
+                    ((ImageButton)findViewById(R.id.route_start)).setImageResource(R.drawable.route_wait);
+                }
+                break;
         }
+    }
+
+    private void showToast(int strRes) {
+        Toast.makeText(this,strRes,Toast.LENGTH_SHORT).show();
     }
 
     private void showRemoveLocoQuestion() {
@@ -453,7 +475,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void showLocoDialog(Loco l, LocoDialog.OnDataConfirmedListener listener) {
-        Dialog dlg = new LocoDialog(this,l,listener);
+        Dialog dlg = new LocoDialog(this, l, listener, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showRemoveLocoQuestion();
+
+            }
+        });
         dlg.show();
     }
 
@@ -593,16 +622,21 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int speed, boolean fromUser) {
-        if(currentloco!=null && currentloco.speed!=speed && speed>=0 && (lastProgressChanged+MIN_PROGRESS_CHANGE_THRESHOLD_MS < System.currentTimeMillis() || speed==0)) {
-            currentloco.speed=speed;
-            sendLocoData(currentloco);
-            lastProgressChanged=System.currentTimeMillis();
-            updateController();
-            if(vibrateSvc.hasVibrator()) {
-                vibrateSvc.vibrate(50);
-            }
+        if(currentloco!=null && currentloco.speed!=speed && speed>=0
+                && (lastProgressChanged+MIN_PROGRESS_CHANGE_THRESHOLD_MS < System.currentTimeMillis() || speed==0)) {
+            changeLocoSpeed(speed);
             seekBar.playSoundEffect(SoundEffectConstants.CLICK);
 
+        }
+    }
+
+    private void changeLocoSpeed(int speed) {
+        currentloco.speed=speed;
+        sendLocoData(currentloco);
+        lastProgressChanged=System.currentTimeMillis();
+        updateController();
+        if(vibrateSvc.hasVibrator()) {
+            vibrateSvc.vibrate(50);
         }
     }
 
@@ -629,6 +663,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+
+        if(currentloco!=null && currentloco.speed!=seekBar.getProgress()) {
+            changeLocoSpeed(seekBar.getProgress());
+        }
 //        if(vibrateSvc.hasVibrator()) {
 //            vibrateSvc.vibrate(200);
 //        }
@@ -659,10 +697,21 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     editSegment(sv);
                 } else {
                     if(connected) {
+                        if(sv.getSegment().isRoutePoint() && routeSetStep==RouteSetStepType.WAIT_START) {
+                            routeStart = sv.getSegment();
+                            routeSetStep = RouteSetStepType.WAIT_END;
+                            showToast(R.string.tapRouteEnd);
+                            return;
+                        }
+                        if(sv.getSegment().isRoutePoint() && routeSetStep==RouteSetStepType.WAIT_END) {
+                            activateRouteTo(sv.getSegment());
+                            return;
+                        }
+
                         if(sv.getSegment().isGenericFunction()) {
                             showFunctionDecoderDlg(sv);
                         } else {
-                            switchSwitch(sv.getSegment());
+                            toggleSwitch(sv.getSegment());
                         }
                         sv.invalidate();
                     }
@@ -671,6 +720,46 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         }
     }
 
+    private void activateRouteTo(Segment to) {
+        // find route
+        RouteFinder rf = new RouteFinder(layout,routeStart,to);
+        Map<Segment,Integer> route = rf.findRoute();
+        if(route==null) {
+            showToast(R.string.noRouteFound);
+        } else {
+            // activate route from routeStart to to
+            for(Segment s : route.keySet()) {
+                Log.d("Route", "route: " + s);
+                if(route.get(s)!=null) {
+                    switchSwitch(s,route.get(s));
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        ;
+                    }
+                    SegmentView sv = findSegmentView(s);
+                    if(sv!=null)
+                        sv.invalidate();
+                }
+            }
+
+            // then:
+            showToast(R.string.setRouteComplete);
+        }
+        routeSetStep = RouteSetStepType.NONE;
+        ((ImageButton)findViewById(R.id.route_start)).setImageResource(R.drawable.route_off);
+    }
+
+    private SegmentView findSegmentView(Segment s) {
+        FrameLayout container = (FrameLayout) findViewById(R.id.container);
+        for(int i=0; i<container.getChildCount(); i++) {
+            View v = container.getChildAt(i);
+            if(v instanceof SegmentView) {
+                if(((SegmentView)v).getSegment().equals(s)) return (SegmentView)v;
+            }
+        }
+        throw new IllegalArgumentException("no segmentview found for segment");
+    }
 
 
     private class EditSwitchListener implements View.OnLongClickListener {
@@ -778,8 +867,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
 
-    private void switchSwitch(Segment segment) {
+    private void toggleSwitch(Segment segment) {
         int newState = 1- segment.getState();
+        switchSwitch(segment, newState);
+    }
+
+    private void switchSwitch(Segment segment, int newState) {
         Log.i(LOG_TAG, "switching " + segment.getId() + " to " + newState);
         sendSetGenericAccessoryCommand(segment.getBus(), segment.getAddress(), newState);
         segment.setState(newState);

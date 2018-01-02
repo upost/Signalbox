@@ -2,20 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 744.09448819 1052.3622047"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="Grafiken.svg">
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+    width="210mm"
+    height="297mm"
+    viewBox="0 0 744.09448819 1052.3622047"
+    id="svg2"
+    version="1.1"
+    inkscape:version="0.91 r13725"
+    sodipodi:docname="Grafiken.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -25,12 +24,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="625.06595"
-     inkscape:cy="758.78659"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="342.2034"
+     inkscape:cy="434.99926"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false" />
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1054"
+     inkscape:window-x="1600"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -39,7 +43,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -217,5 +221,187 @@
        style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
        inkscape:export-xdpi="21.76"
        inkscape:export-ydpi="21.76" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4136-9-3"
+       width="403.08783"
+       height="34.285713"
+       x="94.430786"
+       y="694.79797"
+       rx="2.3165967"
+       ry="34.285713"
+       inkscape:transform-center-x="609.2649"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:export-xdpi="21.76"
+       inkscape:export-ydpi="21.76"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4136-9-3-6"
+       width="403.08783"
+       height="34.285713"
+       x="97.461243"
+       y="782.68121"
+       rx="2.3165967"
+       ry="34.285713"
+       inkscape:transform-center-x="609.2649"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:export-xdpi="21.76"
+       inkscape:export-ydpi="21.76"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png" />
+    <rect
+       inkscape:export-ydpi="21.76"
+       inkscape:export-xdpi="21.76"
+       inkscape:transform-center-y="37.652831"
+       inkscape:transform-center-x="-63.24391"
+       ry="32.55851"
+       rx="1.0267607"
+       y="591.00781"
+       x="207.90923"
+       height="32.55851"
+       width="178.65636"
+       id="rect4165-7"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#1a1a1a;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       transform="matrix(0.86284651,0.50546603,0.06745355,0.99772242,0,0)"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png" />
+    <ellipse
+       style="fill:#ff5555;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4192"
+       cx="127.27921"
+       cy="712.44586"
+       rx="19.192898"
+       ry="18.687822"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png"
+       inkscape:export-xdpi="21"
+       inkscape:export-ydpi="21" />
+    <ellipse
+       ry="18.687822"
+       rx="19.192898"
+       cy="800.32916"
+       cx="463.66"
+       id="ellipse4194"
+       style="fill:#ff5555;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png"
+       inkscape:export-xdpi="21"
+       inkscape:export-ydpi="21" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#1a1a1a;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4196"
+       width="45.619972"
+       height="34.285713"
+       x="163.70992"
+       y="694.63855"
+       rx="0.26218376"
+       ry="34.285713"
+       inkscape:transform-center-x="68.954327"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:export-xdpi="21.76"
+       inkscape:export-ydpi="21.76"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png" />
+    <rect
+       inkscape:export-ydpi="21.76"
+       inkscape:export-xdpi="21.76"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:transform-center-x="68.954327"
+       ry="34.285713"
+       rx="0.26218376"
+       y="783.53192"
+       x="384.93332"
+       height="34.285713"
+       width="45.619972"
+       id="rect4198"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:#1a1a1a;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_wait.png" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4136-9-3-5"
+       width="403.08783"
+       height="34.285713"
+       x="97.966316"
+       y="874.6051"
+       rx="2.3165967"
+       ry="34.285713"
+       inkscape:transform-center-x="609.2649"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:export-xdpi="21.76"
+       inkscape:export-ydpi="21.76"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4136-9-3-6-3"
+       width="403.08783"
+       height="34.285713"
+       x="100.99677"
+       y="962.48834"
+       rx="2.3165967"
+       ry="34.285713"
+       inkscape:transform-center-x="609.2649"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:export-xdpi="21.76"
+       inkscape:export-ydpi="21.76"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png" />
+    <rect
+       inkscape:export-ydpi="21.76"
+       inkscape:export-xdpi="21.76"
+       inkscape:transform-center-y="37.652831"
+       inkscape:transform-center-x="-63.24391"
+       ry="32.55851"
+       rx="1.0267607"
+       y="776.49585"
+       x="197.5061"
+       height="32.55851"
+       width="178.65636"
+       id="rect4165-7-5"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       transform="matrix(0.86284651,0.50546603,0.06745355,0.99772242,0,0)"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png" />
+    <ellipse
+       style="fill:#ff5555;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
+       id="path4192-6"
+       cx="130.81474"
+       cy="892.25299"
+       rx="19.192898"
+       ry="18.687822"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png"
+       inkscape:export-xdpi="21"
+       inkscape:export-ydpi="21" />
+    <ellipse
+       ry="18.687822"
+       rx="19.192898"
+       cy="980.13629"
+       cx="467.19553"
+       id="ellipse4194-2"
+       style="fill:#ff5555;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-dasharray:none"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png"
+       inkscape:export-xdpi="21"
+       inkscape:export-ydpi="21" />
+    <rect
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       id="rect4196-9"
+       width="45.619972"
+       height="34.285713"
+       x="167.24545"
+       y="874.44568"
+       rx="0.26218376"
+       ry="34.285713"
+       inkscape:transform-center-x="68.954327"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:export-xdpi="21.76"
+       inkscape:export-ydpi="21.76"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png" />
+    <rect
+       inkscape:export-ydpi="21.76"
+       inkscape:export-xdpi="21.76"
+       inkscape:transform-center-y="5.7142857"
+       inkscape:transform-center-x="68.954327"
+       ry="34.285713"
+       rx="0.26218376"
+       y="963.33905"
+       x="388.46884"
+       height="34.285713"
+       width="45.619972"
+       id="rect4198-1"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#cccccc;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:3.5999999;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+       inkscape:export-filename="/home/uwe/Develop/workspace-android-studio/Signalbox/app/src/main/res/drawable-mdpi/route_off.png" />
   </g>
 </svg>

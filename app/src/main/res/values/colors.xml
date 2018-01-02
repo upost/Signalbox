@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black_trans">#80000000</color>
-
+    <color name="green">#28b02b</color>
+    <color name="darkgreen">#006600</color>
 </resources>

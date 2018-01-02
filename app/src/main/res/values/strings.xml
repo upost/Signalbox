@@ -41,5 +41,11 @@
     <string name="no_connectivity">no connectivity</string>
     <string name="connectivity_available">connectivity available</string>
     <string name="really_remove">Really remove this loco?</string>
+    <string name="delete">delete</string>
+    <string name="tapRouteStart">Tap route start</string>
+    <string name="tapRouteEnd">Tap route end</string>
+    <string name="setRouteComplete">setting route completed</string>
+    <string name="setRouteCancelled">setting route cancelled</string>
+    <string name="noRouteFound">no route found</string>
 
 </resources>

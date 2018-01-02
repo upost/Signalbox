@@ -24,6 +24,7 @@ public class SegmentView extends View {
 	private Paint black = new Paint();
     private Paint blackFill = new Paint();
     private Paint red = new Paint();
+    private Paint redFill = new Paint();
 //    private Paint fontPaint = new Paint();
     private Paint fontPaintLarge = new Paint();
 	private Paint green = new Paint();
@@ -88,6 +89,10 @@ public class SegmentView extends View {
         red.setStrokeWidth(STROKE_WIDTH*scale);
         red.setAntiAlias(true);
 
+        redFill.setARGB(125,240,100,100);
+        redFill.setStyle(Style.FILL);
+        redFill.setAntiAlias(true);
+
         greyStroke.setARGB(255, 180, 180, 180);
         greyStroke.setStyle(Style.STROKE);
         greyStroke.setStrokeWidth(BORDER_WIDTH * scale);
@@ -109,6 +114,10 @@ public class SegmentView extends View {
         if(segment!=null) {
 
             int state = segment.getState();
+
+            if(segment.isRoutePoint()) {
+                canvas.drawCircle(w/2,h/2, h/4, redFill);
+            }
 
             switch (segment.getType()) {
                 case STRAIGHT_PLATFORM_ABOVE:
@@ -275,6 +284,7 @@ public class SegmentView extends View {
                 }
                 canvas.drawText(display, dw, h/6, fontPaintLarge);
             }
+
         }
 
         canvas.drawRect(0, 0, w-1,h-1, greyStroke);

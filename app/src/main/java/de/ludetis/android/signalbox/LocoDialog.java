@@ -30,7 +30,7 @@ public class LocoDialog extends Dialog {
         void  onDataConfirmed(Loco l);
     }
 
-    public LocoDialog(Context context, Loco l, final OnDataConfirmedListener listener) {
+    public LocoDialog(Context context, Loco l, final OnDataConfirmedListener listener, final View.OnClickListener onDeleteClickedListener) {
         super(context, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         activity = (Activity)context;
         this.loco = l;
@@ -56,6 +56,14 @@ public class LocoDialog extends Dialog {
                 dismiss();
                 EventBus.getDefault().unregister(LocoDialog.this);
                 listener.onDataConfirmed(loco);
+            }
+        });
+
+        findViewById(R.id.delete_loco).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+                onDeleteClickedListener.onClick(view);
             }
         });
 
