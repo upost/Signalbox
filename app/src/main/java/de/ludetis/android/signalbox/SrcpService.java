@@ -80,7 +80,7 @@ public class SrcpService extends Service  {
             Log.d(LOG_TAG, "sending to SRCP server: " + what);
             for (int i = 0; i < RETRIES; i++) {
                 String res = session.getCommandChannel().send(what);
-                //Log.d(LOG_TAG, "result: " + res);
+                Log.d(LOG_TAG, "result: " + res);
                 if(res.contains("100 INFO")) {
                     processInfoResult(res);
                 } else

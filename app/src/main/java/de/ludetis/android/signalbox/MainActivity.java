@@ -565,11 +565,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
      * @param address
      * @param port i.e. 0 or 1 to set a switch
      */
-    private void sendSetGenericAccessoryCommand(int bus, int address, int port) {
-        send("SET " + bus + " GA " + address + " " + port + " 1 100"); // format: SET <bus> GA <addr> <port> <value> <delay>
+    private void sendSetGenericAccessoryCommand(int bus, int address, int port, int delay) {
+        sendSetGenericAccessoryCommand(bus,address,port,1,delay);
     }
-    private void sendSetGenericAccessoryCommand(int bus, int address, int port, int value) {
-        send("SET " + bus + " GA " + address + " " + port + " "+value+" 100"); // format: SET <bus> GA <addr> <port> <value> <delay>
+    private void sendSetGenericAccessoryCommand(int bus, int address, int port, int value, int delay) {
+        send("SET " + bus + " GA " + address + " " + port + " "+value+" "+delay); // format: SET <bus> GA <addr> <port> <value> <delay>
     }
 
     private void sendInitGenericAccessoryCommand(int bus, int address) {
@@ -711,7 +711,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                         if(sv.getSegment().isGenericFunction()) {
                             showFunctionDecoderDlg(sv);
                         } else {
-                            toggleSwitch(sv.getSegment());
+                            switchSegment(sv.getSegment());
                         }
                         sv.invalidate();
                     }
@@ -731,7 +731,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             for(Segment s : route.keySet()) {
                 Log.d("Route", "route: " + s);
                 if(route.get(s)!=null) {
-                    switchSwitch(s,route.get(s));
+                    switchSegment(s,route.get(s));
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
@@ -852,6 +852,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         SegmentSettingDialog dlg = new SegmentSettingDialog(this, segmentView.getSegment(), new SegmentSettingDialog.OnSegmentSettingsChangedListener() {
             @Override
             public void onSegmentSettingChanged(Segment s) {
+                sendInitGenericAccessoryCommand(segmentView.getSegment().getBus(), segmentView.getSegment().getAddress());
                 segmentView.invalidate();
                 storage.put(LAYOUT, layout);
                 storage.flush();
@@ -860,21 +861,42 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             @Override
             public void test(int bus, int address, int port) {
                 Log.i(LOG_TAG, "testing switching " + bus + ":" + address + " to " + port);
-                sendSetGenericAccessoryCommand(bus, address, port);
+                sendSetGenericAccessoryCommand(bus, address, port,100);
             }
         });
         dlg.show();
     }
 
+    private void switchSegment(Segment segment) {
+        if(segment.isSwitch()) {
+            toggleSwitch(segment);
+        } else if(segment.isSemaphore()) {
+            switchSemaphore(segment);
+        }
+    }
+
+    private void switchSegment(Segment segment, int value) {
+        if(segment.isSwitch()) {
+            switchGenericAccessory(segment, value,100);
+        } else if(segment.isSemaphore()) {
+            switchGenericAccessory(segment, value,-1);
+        }
+    }
+
 
     private void toggleSwitch(Segment segment) {
         int newState = 1- segment.getState();
-        switchSwitch(segment, newState);
+        switchGenericAccessory(segment, newState,100);
     }
 
-    private void switchSwitch(Segment segment, int newState) {
+    private void switchSemaphore(Segment segment) {
+        int newState = 1- segment.getState();
+        switchGenericAccessory(segment, newState,-1);
+    }
+
+    private void switchGenericAccessory(Segment segment, int newState, int delay) {
         Log.i(LOG_TAG, "switching " + segment.getId() + " to " + newState);
-        sendSetGenericAccessoryCommand(segment.getBus(), segment.getAddress(), newState);
+        sendSetGenericAccessoryCommand(segment.getBus(), segment.getAddress(), newState, delay);
         segment.setState(newState);
     }
 
@@ -914,7 +936,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 if(s.getBus()==msg.getBus() && s.getAddress()==msg.getAddress()) {
                     if(msg.getValue()>0) {
                         s.setState(msg.getPort());
-                        Log.d(LOG_TAG, "switch " + s.getAddress() + " is currently set to" + s.getState());
+                        Log.d(LOG_TAG, "ga " + s.getAddress() + " is currently set to" + s.getState());
                         break;
                     }
                 }
@@ -948,7 +970,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 buttonPower.setVisibility(View.VISIBLE);
                 buttonPower.setImageResource(R.drawable.power_on);
                 checkGenericAccessorySettings();
-                checkFunctionDecderSettings();
+                checkFunctionDecoderSettings();
                 break;
             case POWER_OFF:
                 power=false;
@@ -974,14 +996,17 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private void checkGenericAccessorySettings() {
         for(Segment s : layout) {
-            if(s.isSwitch()) {
+            if(s.isSwitch() || s.isSemaphore() || s.isGenericAccessory()) {
                 sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 0);
                 sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 1);
+                if(s.isSemaphore()) {
+                    sendInitGenericAccessoryCommand(s.getBus(), s.getAddress());
+                }
             }
         }
     }
 
-    private void checkFunctionDecderSettings() {
+    private void checkFunctionDecoderSettings() {
         for(Segment s : layout) {
             if(s.isGenericFunction()) {
                 sendGetGenericLocoCommand(s.getBus(), s.getAddress());
