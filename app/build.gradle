@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '27.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "de.ludetis.android.signalbox"
-        minSdkVersion 15
-        targetSdkVersion 22
-        versionCode 17
-        versionName "1.7"
+        minSdkVersion 16
+        targetSdkVersion 27
+        versionCode 18
+        versionName "1.8"
     }
     buildTypes {
         release {
@@ -17,14 +17,17 @@ android {
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:27.0.2'
     compile files('libs/jsrcpc-2.4.jar')
     compile files('libs/log4j-1.2.11.jar')
     compile 'de.greenrobot:eventbus:2.4.1'
     compile 'org.mapdb:mapdb:1.0.9'
-    compile 'com.google.code.gson:gson:2.8.0'
-
+    compile 'com.google.code.gson:gson:2.8.2'
 }

@@ -22,6 +22,7 @@ public class SegmentConnector {
             case SEMAPHORE_BOTTOM:
             case SEMAPHORE_TOP:
             case STRAIGHT:
+            case STRAIGHT_ROUTE_MARKER:
                 left[1]=true;
                 right[1]=true;
                 break;
@@ -82,10 +83,12 @@ public class SegmentConnector {
                 right[0]=true;
                 break;
             case ACROSS_UP:
+            case UP_ROUTE_MARKER:
                 left[2]=true;
                 right[0]=true;
                 break;
             case ACROSS_DOWN:
+            case DOWN_ROUTE_MARKER:
                 left[0]=true;
                 right[2]=true;
                 break;

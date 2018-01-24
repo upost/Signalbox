@@ -47,7 +47,7 @@ public class SrcpService extends Service  {
     @Override
     public void onCreate() {
         super.onCreate();
-        storage = new MapDbStorage(DB_FILENAME);
+        storage = new MapDbStorage(this,DB_FILENAME);
         EventBus.getDefault().register(this);
         registerReceiver(new BroadcastReceiver() {
             @Override

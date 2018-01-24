@@ -47,5 +47,7 @@
     <string name="setRouteComplete">setting route completed</string>
     <string name="setRouteCancelled">setting route cancelled</string>
     <string name="noRouteFound">no route found</string>
+    <string name="about">Simple SRCP Client for Android. All rights reserved. No liability whatsoever.</string>
+    <string name="export">export</string>
 
 </resources>

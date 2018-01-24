@@ -7,7 +7,7 @@
         android:layout_height="80dp"
         android:padding="1dp"
         android:id="@+id/image"
-        android:src="@drawable/loco_218r"
+        android:src="@drawable/ic_loco"
         android:layout_gravity="center_horizontal" />
 
 </FrameLayout>

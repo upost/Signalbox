@@ -126,6 +126,7 @@ public class SegmentView extends View {
                 case SEMAPHORE_BOTTOM:
                 case SEMAPHORE_TOP:
                 case STRAIGHT:
+                case STRAIGHT_ROUTE_MARKER:
                     canvas.drawLine(0, h / 2, w - 1, h / 2, black);
                     break;
                 case CURVE_UP:
@@ -185,10 +186,12 @@ public class SegmentView extends View {
                     canvas.drawLine(w / 2, h / 2, w - 1, 0, black);
                     break;
                 case ACROSS_UP:
+                case UP_ROUTE_MARKER:
                     canvas.drawLine(0, h - 1, w / 2, h / 2, black);
                     canvas.drawLine(w / 2, h / 2, w - 1, 0, black);
                     break;
                 case ACROSS_DOWN:
+                case DOWN_ROUTE_MARKER:
                     canvas.drawLine(0, 0, w / 2, h / 2, black);
                     canvas.drawLine(w / 2, h / 2, w - 1, h - 1, black);
                     break;

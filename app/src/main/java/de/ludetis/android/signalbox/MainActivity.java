@@ -4,17 +4,21 @@ package de.ludetis.android.signalbox;
  * copyright 2015 Uwe Post
  */
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Vibrator;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.SoundEffectConstants;
 import android.view.View;
@@ -31,7 +35,6 @@ import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import de.greenrobot.event.EventBus;
+import de.ludetis.android.signalbox.model.AboutDialog;
 import de.ludetis.android.signalbox.model.Loco;
 import de.ludetis.android.signalbox.model.Segment;
 import de.ludetis.android.signalbox.model.ServiceMessage;
@@ -55,6 +59,8 @@ import de.ludetis.android.view.VerticalSeekBar;
 
 public class MainActivity extends Activity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, View.OnLongClickListener {
 
+    private static final int MY_PERMISSIONS_REQUEST = 893;
+    public static final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
 
     enum RouteSetStepType { NONE, WAIT_START, WAIT_END };
 
@@ -93,29 +99,53 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private RouteSetStepType routeSetStep;
     private Segment routeStart;
 
-    //    private Loco currentloco = new Loco(6,0,new int[5],"loco_260r");
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        storage = new MapDbStorage(SrcpService.DB_FILENAME);
 
         vibrateSvc = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         if(!vibrateSvc.hasVibrator()) {
             Log.d(LOG_TAG, "no vibrator!");
         }
 
+        setContentView(R.layout.activity_main);
+
+        buttonPower = findViewById(R.id.power);
+        buttonPower.setOnClickListener(this);
+        buttonConnection =  findViewById(R.id.connection);
+        buttonConnection.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST: {
+                int granted = 0;
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) granted++;
+                }
+                if (granted == PERMISSIONS.length) {
+
+                    Toast.makeText(MainActivity.this, "permissions granted", Toast.LENGTH_LONG).show();
+
+                    init();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    Toast.makeText(MainActivity.this, "cannot run without permission", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
+    private void init() {
+        storage = new MapDbStorage(this,SrcpService.DB_FILENAME);
         checkForExportFile(storage);
 
         locoManager = new LocoManager(storage);
-
-        setContentView(R.layout.activity_main);
-
-        buttonPower = (ImageButton)findViewById(R.id.power);
-        buttonPower.setOnClickListener(this);
-        buttonConnection = (ImageButton) findViewById(R.id.connection);
-        buttonConnection.setOnClickListener(this);
 
         findViewById(R.id.configuration).setOnClickListener(this);
         findViewById(R.id.edit).setOnClickListener(this);
@@ -123,6 +153,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         findViewById(R.id.loco_image).setOnLongClickListener(this);
         findViewById(R.id.close_controller).setOnClickListener(this);
         findViewById(R.id.route_start).setOnClickListener(this);
+        findViewById(R.id.img).setOnClickListener(this);
 
         findViewById(R.id.directionBack).setOnClickListener(this);
         findViewById(R.id.directionForward).setOnClickListener(this);
@@ -133,10 +164,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         for(int r : FUNCTION_BUTTONS) {
             findViewById(r).setOnClickListener(this);
         }
-        seekBar = ((VerticalSeekBar) findViewById(R.id.speedControl));
+        seekBar = findViewById(R.id.speedControl);
         seekBar.setOnSeekBarChangeListener(this);
-        speedDisplay = (TextView) findViewById(R.id.powerLevel);
+        speedDisplay = findViewById(R.id.powerLevel);
         speedDisplay.setText("");
+
+        routeSetStep = RouteSetStepType.NONE;
 
         startService(new Intent(this, SrcpService.class));
 
@@ -145,15 +178,28 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             l.initSent=false;
         }
 
-        routeSetStep = RouteSetStepType.NONE;
-    }
+        loadSettings();
 
+        if(server!=null) {
+            loadLayout();
+            fillContainer();
+        }
+
+        connected=false;
+        buttonConnection.setImageResource(R.drawable.disconnected);
+        buttonPower.setVisibility(View.INVISIBLE);
+
+        EventBus.getDefault().register(this);
+
+        checkPower();
+
+    }
 
 
     private void showLocoList() {
         findViewById(R.id.chooser).setVisibility(View.VISIBLE);
         findViewById(R.id.controller).setVisibility(View.GONE);
-        ViewGroup container = (ViewGroup) findViewById(R.id.locolist);
+        ViewGroup container = findViewById(R.id.locolist);
         container.removeAllViews();
         for(Loco loco : locoManager.getLocoList()) {
             View lv = getLayoutInflater().inflate(R.layout.include_loco,null);
@@ -181,23 +227,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     protected void onResume() {
         super.onResume();
 
-        loadSettings();
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheck == PackageManager.PERMISSION_DENIED ) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, MY_PERMISSIONS_REQUEST);
+        } else {
 
-        if(server!=null) {
-            loadLayout();
-            fillContainer();
+            init();
         }
-
-        connected=false;
-        buttonConnection.setImageResource(R.drawable.disconnected);
-        buttonPower.setVisibility(View.INVISIBLE);
-
-        EventBus.getDefault().register(this);
-
-        checkPower();
-
-        // TODO add an export function somewhere.
-        //export();
 
     }
 
@@ -251,16 +287,27 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         o.add("layout", gson.toJsonTree(layout));
         o.add("locos", gson.toJsonTree(locoManager.getLocoList()));
         String export = o.toString();
-        File file = new File(Environment.getExternalStorageDirectory(), "signalbox.json");
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file);
-            fos.write(export.getBytes());
 
-            fos.close();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "ioexception during export",e);
-        }
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,"signalbox export");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, export);
+        sendIntent.setType("application/json");
+        startActivity(sendIntent);
+
+//
+//        File file = new File(Environment.getExternalStorageDirectory(), "signalbox.json");
+//        FileOutputStream fos = null;
+//        try {
+//            fos = new FileOutputStream(file);
+//            fos.write(export.getBytes());
+//
+//            fos.close();
+//            Toast.makeText(this, "exported to signalbox.json", Toast.LENGTH_SHORT).show();
+//        } catch (IOException e) {
+//            Toast.makeText(this, "could not export", Toast.LENGTH_SHORT).show();
+//            Log.e(LOG_TAG, "ioexception during export",e);
+//        }
 
     }
 
@@ -441,7 +488,15 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     ((ImageButton)findViewById(R.id.route_start)).setImageResource(R.drawable.route_wait);
                 }
                 break;
+            case R.id.img:
+                showAboutDialog();
+                break;
         }
+    }
+
+    private void showAboutDialog() {
+        AboutDialog dlg = new AboutDialog(this, this::export);
+        dlg.show();
     }
 
     private void showToast(int strRes) {
@@ -795,7 +850,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             @Override
             public void onMarkerIdChanged(Segment s) {
                 segmentView.invalidate();
-                storage.put("layout", layout);
+                storage.put(LAYOUT, layout);
                 storage.flush();
             }
         });
@@ -832,7 +887,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private void editSegment(final SegmentView segmentView) {
         final boolean isSwitch = segmentView.getSegment().isSwitch();
-        EditDialog dlg = new EditDialog(this, new EditDialog.OnSegmentTypeChangedListener() {
+        EditDialog dlg = new EditDialog(this, new EditDialog.OnEditListener() {
             @Override
             public void onSegmentTypeChanged(Segment.Type t, String id) {
                 segmentView.getSegment().setType(t);
@@ -843,6 +898,28 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                     // now is switch and needs config.
                     editSegmentSettings(segmentView);
                 }
+            }
+
+            @Override
+            public void onMove(int x, int y) {
+                for(Segment s : layout) {
+                    s.setX(s.getX()+x);
+                    s.setY(s.getY()+y);
+                }
+                if(x==1) {
+                    for(y=0; y<10; y++) {
+                        layout.add(new Segment(Segment.Type.EMPTY,"", 0,y,0,0));
+                    }
+                }
+                if(y==1) {
+                    for(x=0; x<10; x++) {
+                        layout.add(new Segment(Segment.Type.EMPTY,"", 0,y,0,0));
+                    }
+                }
+                storage.put(LAYOUT, layout);
+                storage.flush();
+                loadLayout();
+                fillContainer();
             }
         });
         dlg.show();

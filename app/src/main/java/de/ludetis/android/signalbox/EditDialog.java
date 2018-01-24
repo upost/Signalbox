@@ -15,13 +15,14 @@ public class EditDialog extends Dialog implements View.OnClickListener {
 
     private static final int SEGMENT_WIDTH = 200;
     private static final int SEGMENT_HEIGHT = 100;
-    private final OnSegmentTypeChangedListener listener;
+    private final OnEditListener listener;
 
-    interface OnSegmentTypeChangedListener {
+    interface OnEditListener {
         void onSegmentTypeChanged(Segment.Type t, String id);
+        void onMove(int x, int y);
     }
 
-    public EditDialog(Context context, OnSegmentTypeChangedListener listener) {
+    public EditDialog(Context context, OnEditListener listener) {
         super(context,android.R.style.Theme_Translucent_NoTitleBar_Fullscreen);
         this.listener = listener;
         setContentView(R.layout.dlg_edit);
@@ -31,6 +32,8 @@ public class EditDialog extends Dialog implements View.OnClickListener {
             segmentView.setSegment(SegmentFactory.newSegment(type));
             FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(SEGMENT_WIDTH,SEGMENT_HEIGHT);
             segmentView.setOnClickListener(this);
+            findViewById(R.id.move_down).setOnClickListener(this);
+            findViewById(R.id.move_right).setOnClickListener(this);
             container.addView(segmentView, lp);
         }
     }
@@ -40,6 +43,12 @@ public class EditDialog extends Dialog implements View.OnClickListener {
         if(v instanceof SegmentView) {
             listener.onSegmentTypeChanged(((SegmentView) v) .getSegment().getType(), ((SegmentView) v) .getSegment().getId());
             dismiss();
+        }
+        if(v.getId()==R.id.move_down) {
+            listener.onMove(0,1);
+        }
+        if(v.getId()==R.id.move_right) {
+            listener.onMove(1,0);
         }
     }
 }
