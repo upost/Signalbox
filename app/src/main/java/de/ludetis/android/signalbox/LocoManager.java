@@ -14,7 +14,7 @@ public class LocoManager {
     private static final String LOCOLIST = "locos2";
     private final List<Loco> locoList = new ArrayList<Loco>();
     private final MapStorage storage;
-    public static final int FUNCTION_MAX = 10;
+    public static final int FUNCTION_MAX = 20;
 
 
     public LocoManager(MapStorage storage) {

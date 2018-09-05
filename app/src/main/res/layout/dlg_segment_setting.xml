@@ -70,8 +70,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:id="@+id/test"
-        android:text="@string/test"/>
+        android:id="@+id/test0"
+        android:text="@string/test0"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_gravity="left"
+        android:id="@+id/test1"
+        android:text="@string/test1"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

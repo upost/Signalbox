@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    mavenLocal()
+}
+
 android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
@@ -24,10 +28,10 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile files('libs/jsrcpc-2.4.jar')
-    compile files('libs/log4j-1.2.11.jar')
-    compile 'de.greenrobot:eventbus:2.4.1'
-    compile 'org.mapdb:mapdb:1.0.9'
-    compile 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation files('libs/jsrcpc-2.4.jar')
+    implementation files('libs/log4j-1.2.11.jar')
+    implementation 'de.greenrobot:eventbus:2.4.1'
+    implementation 'org.mapdb:mapdb:1.0.9a' // newer versions are not supported on Android!
+    implementation 'com.google.code.gson:gson:2.8.5'
 }

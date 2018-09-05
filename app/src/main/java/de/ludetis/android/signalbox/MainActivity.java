@@ -61,11 +61,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private static final int MY_PERMISSIONS_REQUEST = 893;
     public static final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private static final int DEFAULT_FUNCTION_KEYS = 5;
 
     enum RouteSetStepType { NONE, WAIT_START, WAIT_END };
 
     private static final int[] FUNCTION_BUTTONS = new int[] {R.id.function0, R.id.function1, R.id.function2, R.id.function3,
-            R.id.function4,R.id.function5};
+            R.id.function4,R.id.function5, R.id.function6, R.id.function7, R.id.function8, R.id.function9, R.id.function10,
+            R.id.function11, R.id.function12, R.id.function13, R.id.function14, R.id.function15, R.id.function16, R.id.function17,
+            R.id.function18, R.id.function19};
     private static final String LOG_TAG = "SRCPClient";
     private static final int SEGMENT_WIDTH = 200;
     private static final int SEGMENT_HEIGHT = 100;
@@ -463,7 +466,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 emergencyStop();
                 break;
             case R.id.add_loco:
-                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[LocoManager.FUNCTION_MAX],"");
+                final Loco l = new Loco(DEFAULT_BUS,0,0,new int[LocoManager.FUNCTION_MAX], DEFAULT_FUNCTION_KEYS, "");
                 showLocoDialog(l, new LocoDialog.OnDataConfirmedListener() {
                     @Override
                     public void onDataConfirmed(Loco loco) {
@@ -520,6 +523,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     private void updateController() {
         for(int i =0; i<FUNCTION_BUTTONS.length; i++) {
+            (findViewById(FUNCTION_BUTTONS[i])).setVisibility(i<currentloco.getFunctionKeys()?View.VISIBLE:View.GONE);
             (findViewById(FUNCTION_BUTTONS[i])).setBackgroundColor(currentloco.getFunction(i)>0 ? COLOR_SET : COLOR_NOTSET);
         }
 
@@ -670,7 +674,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private void initCurrentLoco() {
         if(currentloco!=null) {
             Log.d(LOG_TAG,"init current loco...");
-            sendInitGenericLocoCommand(currentloco.getBus(), currentloco.address, SPEED_STEPS, 5);
+            sendInitGenericLocoCommand(currentloco.getBus(), currentloco.address, SPEED_STEPS, FUNCTION_BUTTONS.length);
             currentloco.initSent=true;
         }
     }

@@ -22,7 +22,7 @@ public class LocoDialog extends Dialog {
 
     public static final int PICK_IMAGE = 12345;
     private final Loco loco;
-    private final EditText etAddress,etBus;
+    private final EditText etAddress,etBus,etFunctionKeys;
     private final ImageView ivImage;
     private final Activity activity;
 
@@ -39,6 +39,8 @@ public class LocoDialog extends Dialog {
         etAddress.setText(Integer.toString(loco.address));
         etBus= (EditText) findViewById(R.id.bus);
         etBus.setText(Integer.toString(loco.getBus()));
+        etFunctionKeys = findViewById(R.id.functions);
+        etFunctionKeys.setText((Integer.toString(loco.getFunctionKeys())));
 
         ivImage = (ImageView) findViewById(R.id.image);
         if(loco.image!=null && !TextUtils.isEmpty(loco.image)) {
@@ -52,6 +54,8 @@ public class LocoDialog extends Dialog {
             public void onClick(View v) {
                 loco.address = Integer.parseInt(etAddress.getText().toString());
                 loco.setBus( Integer.parseInt(etBus.getText().toString()) );
+                loco.setFunctionKeys(Integer.parseInt(etFunctionKeys.getText().toString()));
+
                 loco.initSent = false;
                 dismiss();
                 EventBus.getDefault().unregister(LocoDialog.this);

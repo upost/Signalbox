@@ -37,5 +37,6 @@
     <string name="tapRouteEnd">Fahrstraße: Ziel antippen</string>
     <string name="setRouteComplete">Fahrstraße eingestellt</string>
     <string name="noRouteFound">Keine Fahrstreße gefunden</string>
+    <string name="functionKeys">Funktionstasten</string>
 
 </resources>

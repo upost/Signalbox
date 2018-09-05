@@ -21,6 +21,8 @@
     <string name="address">Address</string>
     <string name="id">ID</string>
     <string name="test">Test</string>
+    <string name="test0">Test 0</string>
+    <string name="test1">Test 1</string>
     <string name="marker_id">Marker ID</string>
     <string name="stop">stop</string>
     <string name="add_loco">add loco</string>
@@ -49,5 +51,6 @@
     <string name="noRouteFound">no route found</string>
     <string name="about">Simple SRCP Client for Android. All rights reserved. No liability whatsoever.</string>
     <string name="export">export</string>
+    <string name="functionKeys">Function Keys</string>
 
 </resources>

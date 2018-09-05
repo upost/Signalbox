@@ -14,12 +14,14 @@ public class Loco implements Serializable {
     static final long serialVersionUID =-3402530285538002228L;
 
     private int[] functions;
+    //private int functionKeys=5;
 
-    public Loco(int bus, int address, int direction, int[] function, String image) {
+    public Loco(int bus, int address, int direction, int[] function, int functionKeys, String image) {
         this.bus = bus;
         this.address = address;
         this.direction = direction;
         this.function = function;
+        //this.functionKeys = functionKeys;
         this.image = image;
         uuid = UUID.randomUUID();
     }
@@ -91,5 +93,15 @@ public class Loco implements Serializable {
 
     public void setDummy(String dummy) {
         this.dummy = dummy;
+    }
+
+    public int getFunctionKeys() {
+        //if(functionKeys<5) functionKeys=5;
+        //return functionKeys;
+        return 20;
+    }
+
+    public void setFunctionKeys(int functionKeys) {
+        //this.functionKeys = functionKeys;
     }
 }

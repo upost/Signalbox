@@ -144,12 +144,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_width="125dp"
-                android:layout_height="80dp"
-                android:padding="1dp"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/loco_image"/>
+                <ImageView
+                    android:id="@+id/loco_image"
+                    android:layout_width="140dp"
+                    android:layout_height="75dp"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="1dp"/>
                 <ImageView
                     android:id="@+id/close_controller"
                     android:layout_width="32dp"
@@ -205,17 +205,106 @@
                         android:layout_height="@dimen/smallbutton_size"
                         android:padding="0dp"
                         android:text="F5"  />
+                    <Button
+                        android:id="@+id/function6"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F6"  />
+                    <Button
+                        android:id="@+id/function7"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F7"  />
+                    <Button
+                        android:id="@+id/function8"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F8"  />
+                    <Button
+                        android:id="@+id/function9"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F9"  />
                 </LinearLayout>
                 <de.ludetis.android.view.VerticalSeekBar
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
                     android:background="@drawable/slider_bg"
                     android:layout_gravity="center_horizontal"
                     android:max="100"
                     android:thumb="@drawable/seekbar_thumb"
                     android:id="@+id/speedControl" />
-
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <Button
+                        android:id="@+id/function10"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F10"  />
+                    <Button
+                        android:id="@+id/function11"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F11"  />
+                    <Button
+                        android:id="@+id/function12"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F12"  />
+                    <Button
+                        android:id="@+id/function13"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F13"  />
+                    <Button
+                        android:id="@+id/function14"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F14"  />
+                    <Button
+                        android:id="@+id/function15"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F15"  />
+                    <Button
+                        android:id="@+id/function16"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F16"  />
+                    <Button
+                        android:id="@+id/function17"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F17"  />
+                    <Button
+                        android:id="@+id/function18"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F18"  />
+                    <Button
+                        android:id="@+id/function19"
+                        android:layout_width="@dimen/smallbutton_size"
+                        android:layout_height="@dimen/smallbutton_size"
+                        android:padding="0dp"
+                        android:text="F19"  />
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"

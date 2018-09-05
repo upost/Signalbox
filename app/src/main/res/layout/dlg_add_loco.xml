@@ -69,6 +69,23 @@
                 android:singleLine="true"
                 android:imeOptions="actionDone"
                 android:id="@+id/address"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="start"
+                android:textSize="24sp"
+                android:textColor="@android:color/black"
+                android:text="@string/functionKeys"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:singleLine="true"
+                android:imeOptions="actionDone"
+                android:id="@+id/functions"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="0dp"
