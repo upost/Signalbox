@@ -12,6 +12,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,6 +39,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,6 +65,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     private static final int MY_PERMISSIONS_REQUEST = 893;
     public static final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int DEFAULT_FUNCTION_KEYS = 5;
+    private static final int THUMBNAIL_SIZE = 128;
 
     enum RouteSetStepType { NONE, WAIT_START, WAIT_END };
 
@@ -208,12 +212,55 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             View lv = getLayoutInflater().inflate(R.layout.include_loco,null);
             lv.findViewById(R.id.image).setTag(R.id.TAGKEY_LOCO, loco);
             lv.findViewById(R.id.image).setOnClickListener(this);
-            ((ImageView)lv.findViewById(R.id.image)).setImageURI(Uri.parse(loco.image));
+
+            try {
+                ((ImageView) lv.findViewById(R.id.image)).setImageBitmap(getThumbnail( Uri.parse(loco.image)));
+
+            } catch (IOException e) {
+                ((ImageView) lv.findViewById(R.id.image)).setImageResource(R.drawable.default_loco);
+            }
+
+
             container.addView(lv);
+
         }
         View lv = getLayoutInflater().inflate(R.layout.include_addloco,null);
         lv.findViewById(R.id.add_loco).setOnClickListener(this);
         container.addView(lv);
+    }
+
+    public  Bitmap getThumbnail(Uri uri) throws  IOException{
+        InputStream input = this.getContentResolver().openInputStream(uri);
+
+        BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+        onlyBoundsOptions.inJustDecodeBounds = true;
+        onlyBoundsOptions.inDither=true;//optional
+        onlyBoundsOptions.inPreferredConfig=Bitmap.Config.ARGB_8888;//optional
+        BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+        input.close();
+
+        if ((onlyBoundsOptions.outWidth == -1) || (onlyBoundsOptions.outHeight == -1)) {
+            return null;
+        }
+
+        int originalSize = (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) ? onlyBoundsOptions.outHeight : onlyBoundsOptions.outWidth;
+
+        double ratio = (originalSize > THUMBNAIL_SIZE) ? (originalSize / THUMBNAIL_SIZE) : 1.0;
+
+        BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio);
+        bitmapOptions.inDither = true; //optional
+        bitmapOptions.inPreferredConfig=Bitmap.Config.ARGB_8888;//
+        input = this.getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
+        input.close();
+        return bitmap;
+    }
+
+    private static int getPowerOfTwoForSampleRatio(double ratio){
+        int k = Integer.highestOneBit((int)Math.floor(ratio));
+        if(k==0) return 1;
+        else return k;
     }
 
     private void showLocoController(Loco loco) {
@@ -241,7 +288,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void checkForExportFile(MapStorage storage) {
+        Log.d(LOG_TAG, "checking for import file in "+Environment.getExternalStorageDirectory());
         File file = new File(Environment.getExternalStorageDirectory(), "signalbox.json");
+
         if(file.exists()) {
             try {
                 BufferedReader br = new BufferedReader(new FileReader(file));
