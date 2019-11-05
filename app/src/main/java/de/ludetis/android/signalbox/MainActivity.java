@@ -212,14 +212,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             View lv = getLayoutInflater().inflate(R.layout.include_loco,null);
             lv.findViewById(R.id.image).setTag(R.id.TAGKEY_LOCO, loco);
             lv.findViewById(R.id.image).setOnClickListener(this);
+            if(loco.address==0)
+                ((ImageView) lv.findViewById(R.id.image)).setImageResource(R.drawable.analog_loco);
+            else {
+                try {
+                    ((ImageView) lv.findViewById(R.id.image)).setImageBitmap(getThumbnail(Uri.parse(loco.image)));
 
-            try {
-                ((ImageView) lv.findViewById(R.id.image)).setImageBitmap(getThumbnail( Uri.parse(loco.image)));
-
-            } catch (IOException e) {
-                ((ImageView) lv.findViewById(R.id.image)).setImageResource(R.drawable.default_loco);
+                } catch (IOException e) {
+                    ((ImageView) lv.findViewById(R.id.image)).setImageResource(R.drawable.default_loco);
+                }
             }
-
 
             container.addView(lv);
 
@@ -267,7 +269,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         currentloco = loco;
         findViewById(R.id.chooser).setVisibility(View.GONE);
         findViewById(R.id.controller).setVisibility(View.VISIBLE);
-        ((ImageView)findViewById(R.id.loco_image)).setImageURI(Uri.parse(loco.image));
+        if(loco.address==0)
+            ((ImageView)findViewById(R.id.loco_image)).setImageResource(R.drawable.analog_loco);
+        else
+            ((ImageView)findViewById(R.id.loco_image)).setImageURI(Uri.parse(loco.image));
         // get current values
         sendGetGenericLocoCommand(1, loco.address);
         updateController();
@@ -716,7 +721,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void sendInitGenericLocoCommand(int bus, int address, int speedSteps, int functions) {
-        send("INIT "+bus+" GL "+address+" N 1 "+speedSteps+" "+functions);
+        if(address==0) {
+            // analog
+            send("INIT " + bus + " GL " + address + " A 1 "+speedSteps + " 0" );
+        } else {
+            send("INIT " + bus + " GL " + address + " " + SrcpService.DEFAULT_PROTOCOL + " 1 " + speedSteps + " " + functions);
+        }
 
     }
 
@@ -1020,13 +1030,28 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     }
 
     private void switchSemaphore(Segment segment) {
-        int newState = 1- segment.getState();
-        switchGenericAccessory(segment, newState,-1);
+        if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) {
+            int newState = segment.getState()+1;
+            if(newState==3) newState=0;
+            if(newState<2)
+                switchGenericAccessory(segment, newState, -1);
+            else {// Hp2
+                switchGenericAccessory(segment, 0, -1, 1);
+                segment.setState(newState);
+            }
+        } else {
+            int newState = 1 - segment.getState();
+            switchGenericAccessory(segment, newState, -1);
+
+        }
     }
 
     private void switchGenericAccessory(Segment segment, int newState, int delay) {
+        switchGenericAccessory(segment,newState,delay,0);
+    }
+    private void switchGenericAccessory(Segment segment, int newState, int delay,int offset) {
         Log.i(LOG_TAG, "switching " + segment.getId() + " to " + newState);
-        sendSetGenericAccessoryCommand(segment.getBus(), segment.getAddress(), newState, delay);
+        sendSetGenericAccessoryCommand(segment.getBus(), segment.getAddress()+offset, newState, delay);
         segment.setState(newState);
     }
 
@@ -1131,6 +1156,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 sendGetGenericAccessoryCommand(s.getBus(), s.getAddress(), 1);
                 if(s.isSemaphore()) {
                     sendInitGenericAccessoryCommand(s.getBus(), s.getAddress());
+                    sendInitGenericAccessoryCommand(s.getBus(), s.getAddress()+1);
                 }
             }
         }

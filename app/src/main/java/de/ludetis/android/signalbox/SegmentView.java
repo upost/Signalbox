@@ -25,10 +25,11 @@ public class SegmentView extends View {
     private Paint blackFill = new Paint();
     private Paint red = new Paint();
     private Paint redFill = new Paint();
-//    private Paint fontPaint = new Paint();
+
     private Paint fontPaintLarge = new Paint();
 	private Paint green = new Paint();
     private Paint greenFilled = new Paint();
+    private Paint orangeFilled = new Paint();
 	private float scale;
 	private Segment segment;
 
@@ -84,6 +85,10 @@ public class SegmentView extends View {
         greenFilled.setStyle(Style.FILL);
         greenFilled.setAntiAlias(true);
 
+        orangeFilled.setARGB(255,240,170,40);
+        orangeFilled.setStyle(Style.FILL);
+        orangeFilled.setAntiAlias(true);
+
         red.setARGB(255,160,40,40);
         red.setStyle(Style.STROKE);
         red.setStrokeWidth(STROKE_WIDTH*scale);
@@ -125,6 +130,8 @@ public class SegmentView extends View {
                 case STRAIGHT_MARKER:
                 case SEMAPHORE_BOTTOM:
                 case SEMAPHORE_TOP:
+                case SEMAPHORE3_BOTTOM:
+                case SEMAPHORE3_TOP:
                 case STRAIGHT:
                 case STRAIGHT_ROUTE_MARKER:
                     canvas.drawLine(0, h / 2, w - 1, h / 2, black);
@@ -232,11 +239,19 @@ public class SegmentView extends View {
 
             // semaphore
             if (segment.isSemaphore()) {
-                float dh = h/4 + (segment.getType()== Segment.Type.SEMAPHORE_TOP ? 0 : h/2);
-                float sl = w/4; float sh = h/6;
+                float dh = h/4 + (segment.getType()== Segment.Type.SEMAPHORE_TOP|| segment.getType()== Segment.Type.SEMAPHORE3_TOP ? 0 : h/2);
+                float sl = w/4;
+                if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) sl=w/3;
+                float sh = h/6;
                 canvas.drawRect(w/2-sl/2, dh-sh, w/2+sl/2, dh+sh, blackFill );
-                canvas.drawCircle(w/2-sl/4, dh, sh/4, segment.getState()==0 ? red : greyFill);
-                canvas.drawCircle(w/2+sl/4, dh, sh/4, segment.getState()!=0 ? greenFilled : greyFill );
+                if(segment.getType()== Segment.Type.SEMAPHORE_TOP || segment.getType()== Segment.Type.SEMAPHORE_BOTTOM) {
+                    canvas.drawCircle(w / 2 - sl / 4, dh, sh / 4, segment.getState() == 0 ? red : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 4, dh, sh / 4, segment.getState() == 1 ? greenFilled : greyFill);
+                } else if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) {
+                    canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, segment.getState() == 0 ? red : greyFill);
+                    canvas.drawCircle(w / 2         , dh, sh / 4, segment.getState() == 2 ? orangeFilled : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 3, dh, sh / 4, segment.getState() >= 1 ? greenFilled : greyFill);
+                }
 
                 String display = "";
                 if (!TextUtils.isEmpty(segment.getId())) {

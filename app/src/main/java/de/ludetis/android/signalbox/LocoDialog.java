@@ -43,6 +43,9 @@ public class LocoDialog extends Dialog {
         etFunctionKeys.setText((Integer.toString(loco.getFunctionKeys())));
 
         ivImage = (ImageView) findViewById(R.id.image);
+        if(l.address==0) {
+            ivImage.setImageResource(R.drawable.analog_loco);
+        } else
         if(loco.image!=null && !TextUtils.isEmpty(loco.image)) {
             Uri uri = Uri.parse(loco.image);
             if(uri!=Uri.EMPTY)

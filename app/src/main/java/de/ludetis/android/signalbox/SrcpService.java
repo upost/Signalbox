@@ -31,6 +31,7 @@ import de.ludetis.android.storage.MapStorage;
 public class SrcpService extends Service  {
 
     public final static String DB_FILENAME="signalbox5";
+    public static final String DEFAULT_PROTOCOL = "N";
     private static final String LOG_TAG = "SrcpService";
     private static final int RETRIES = 1;
     private static final long RETRY_DELAY_MS = 100;
@@ -77,7 +78,7 @@ public class SrcpService extends Service  {
     private boolean sendSrcpMessage(String what) {
         boolean result = true;
         try {
-            Log.d(LOG_TAG, "sending to SRCP server: " + what);
+            Log.i(LOG_TAG, "sending to SRCP server: " + what);
             for (int i = 0; i < RETRIES; i++) {
                 String res = session.getCommandChannel().send(what);
                 Log.d(LOG_TAG, "result: " + res);
@@ -102,7 +103,7 @@ public class SrcpService extends Service  {
             if((what.startsWith("SET")||what.startsWith("GET")) && what.contains("GL")) {
                 EventBus.getDefault().post(new StatusMessage(StatusMessage.Status.CURRENT_LOCO_UNKNOWN));
             } else if(what.startsWith("GET") && what.contains("GA")) {
-                Log.d(LOG_TAG, "GET GA failed, need to init...");
+                Log.i(LOG_TAG, "GET GA failed, need to init...");
                 String[] s = TextUtils.split(what," ");
                 EventBus.getDefault().post(new SrcpGenericAccessoryInfoMessage(Integer.parseInt(s[1]),Integer.parseInt(s[3]),Integer.parseInt(s[4]),false));
             } else if(what.startsWith("GET 1 POWER")){
@@ -123,7 +124,7 @@ public class SrcpService extends Service  {
         String[] s = TextUtils.split(res," ");
         if("GL".equals(s[4])) {
             // GL info
-            Log.d(LOG_TAG,"incoming info gl result: " + res);
+            Log.i(LOG_TAG,"incoming info gl result: " + res);
             List<Integer> funcs = new ArrayList<Integer>();
             int[] fu = new int[s.length-9];
             for(int i=9; i<s.length; i++) {
@@ -136,7 +137,7 @@ public class SrcpService extends Service  {
         }
         if("GA".equals(s[4])) {
             // GA info
-            Log.d(LOG_TAG,"incoming info ga result: " + res);
+            Log.i(LOG_TAG,"incoming info ga result: " + res);
             EventBus.getDefault().post(new SrcpGenericAccessoryInfoMessage(Integer.parseInt(s[3]),
                     Integer.parseInt(s[5]),Integer.parseInt(s[6]), Integer.parseInt(s[7]) ));
                     //List<Integer> funcs = new ArrayList<Integer>();

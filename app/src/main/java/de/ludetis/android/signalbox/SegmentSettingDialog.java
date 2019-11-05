@@ -33,6 +33,8 @@ public class SegmentSettingDialog extends Dialog implements View.OnClickListener
         findViewById(R.id.save).setOnClickListener(this);
         findViewById(R.id.test0).setOnClickListener(this);
         findViewById(R.id.test1).setOnClickListener(this);
+        findViewById(R.id.test2).setOnClickListener(this);
+        findViewById(R.id.test3).setOnClickListener(this);
         findViewById(R.id.cancel).setOnClickListener(this);
         etId = (EditText) findViewById(R.id.id);
         etBus = (EditText) findViewById(R.id.bus);
@@ -62,6 +64,22 @@ public class SegmentSettingDialog extends Dialog implements View.OnClickListener
             segmentView.getSegment().setState(1);
             segmentView.invalidate();
             port = 1;
+        }
+        if(v.getId()==R.id.test2) {
+            int address = Integer.parseInt(etAddress.getText().toString());
+            int bus = Integer.parseInt(etBus.getText().toString());
+            listener.test(bus,address+1,0);
+            segmentView.getSegment().setState(1); // 2
+            segmentView.invalidate();
+            port = 2;
+        }
+        if(v.getId()==R.id.test3) {
+            int address = Integer.parseInt(etAddress.getText().toString());
+            int bus = Integer.parseInt(etBus.getText().toString());
+            listener.test(bus,address+1,1);
+            segmentView.getSegment().setState(1); // 3
+            segmentView.invalidate();
+            port = 3;
         }
         if(v.getId()==R.id.save) {
             int address = Integer.parseInt(etAddress.getText().toString());

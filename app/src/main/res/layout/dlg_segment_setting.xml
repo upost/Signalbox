@@ -6,7 +6,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 <LinearLayout android:layout_gravity="center"
     android:background="@android:color/background_light"
-    android:orientation="vertical" android:layout_width="400dp"
+    android:orientation="vertical" android:layout_width="450dp"
     android:padding="10dp"
     android:layout_height="wrap_content">
     <TextView
@@ -66,32 +66,45 @@
 <FrameLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="left"
+        android:layout_height="wrap_content">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
         android:id="@+id/test0"
         android:text="@string/test0"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="80dp"
-        android:layout_gravity="left"
         android:id="@+id/test1"
         android:text="@string/test1"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/test2"
+            android:text="@string/test2"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/test3"
+            android:text="@string/test3"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_gravity="right"
+        android:layout_height="wrap_content">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="80dp"
-        android:layout_gravity="right"
         android:id="@+id/cancel"
         android:text="@string/cancel"/>
     <Button
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="right"
     android:id="@+id/save"
-    android:text="@string/save"/>
+        android:text="@string/save"/></LinearLayout>
 </FrameLayout>
 </LinearLayout>
     </FrameLayout>
