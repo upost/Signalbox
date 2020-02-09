@@ -1039,7 +1039,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 switchGenericAccessory(segment, 0, -1, 1);
                 segment.setState(newState);
             }
-        } else {
+        } else if(segment.getType()== Segment.Type.SEMAPHORE4_TOP || segment.getType()== Segment.Type.SEMAPHORE4_BOTTOM) {
+            int newState = segment.getState()+1;
+            if(newState==4) newState=0;
+            if(newState<2)
+                switchGenericAccessory(segment, newState, -1);
+            else {// Hp2 or Hp0Sr1
+                switchGenericAccessory(segment, newState-2, -1, 1);
+                segment.setState(newState);
+            }
+        } else{
             int newState = 1 - segment.getState();
             switchGenericAccessory(segment, newState, -1);
 

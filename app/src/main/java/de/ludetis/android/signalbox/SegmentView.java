@@ -18,18 +18,18 @@ public class SegmentView extends View {
 	private static final float BORDER_WIDTH = 1f;
     public static final float FONT_SIZE = 10f;
     private static final float FONT_SIZE_LARGE = 15f;
-    private Paint white = new Paint();
+    private Paint whiteFilled = new Paint();
     private Paint greyStroke = new Paint();
     private Paint greyFill = new Paint();
 	private Paint black = new Paint();
     private Paint blackFill = new Paint();
-    private Paint red = new Paint();
+    private Paint redSignal = new Paint();
     private Paint redFill = new Paint();
 
     private Paint fontPaintLarge = new Paint();
 	private Paint green = new Paint();
-    private Paint greenFilled = new Paint();
-    private Paint orangeFilled = new Paint();
+    private Paint greenSignal = new Paint();
+    private Paint orangeSignal = new Paint();
 	private float scale;
 	private Segment segment;
 
@@ -52,8 +52,8 @@ public class SegmentView extends View {
 	private void commonConstructor(Context context) {
 		scale = context.getResources().getDisplayMetrics().density;
 		
-		white.setARGB(255,255,255,255);
-		white.setStyle(Style.FILL);
+		whiteFilled.setARGB(255,255,255,255);
+		whiteFilled.setStyle(Style.FILL);
 
         black.setARGB(255,0,0,0);
         black.setStyle(Style.STROKE);
@@ -81,18 +81,20 @@ public class SegmentView extends View {
         green.setStrokeWidth(STROKE_WIDTH*scale);
         green.setAntiAlias(true);
 
-        greenFilled.setARGB(255,40,180,40);
-        greenFilled.setStyle(Style.FILL);
-        greenFilled.setAntiAlias(true);
+        greenSignal.setARGB(255,40,180,40);
+        greenSignal.setStyle(Style.FILL_AND_STROKE);
+        greenSignal.setStrokeWidth(STROKE_WIDTH*scale);
+        greenSignal.setAntiAlias(true);
 
-        orangeFilled.setARGB(255,240,170,40);
-        orangeFilled.setStyle(Style.FILL);
-        orangeFilled.setAntiAlias(true);
+        orangeSignal.setARGB(255,240,170,40);
+        orangeSignal.setStyle(Style.FILL_AND_STROKE);
+        orangeSignal.setStrokeWidth(STROKE_WIDTH*scale);
+        orangeSignal.setAntiAlias(true);
 
-        red.setARGB(255,160,40,40);
-        red.setStyle(Style.STROKE);
-        red.setStrokeWidth(STROKE_WIDTH*scale);
-        red.setAntiAlias(true);
+        redSignal.setARGB(255,160,40,40);
+        redSignal.setStyle(Style.FILL_AND_STROKE);
+        redSignal.setStrokeWidth(STROKE_WIDTH*scale);
+        redSignal.setAntiAlias(true);
 
         redFill.setARGB(125,240,100,100);
         redFill.setStyle(Style.FILL);
@@ -102,7 +104,7 @@ public class SegmentView extends View {
         greyStroke.setStyle(Style.STROKE);
         greyStroke.setStrokeWidth(BORDER_WIDTH * scale);
 
-        greyFill.setARGB(255, 200, 200, 200);
+        greyFill.setARGB(255, 150, 150, 150);
         greyFill.setStyle(Style.FILL);
 
 
@@ -114,7 +116,7 @@ public class SegmentView extends View {
 		float w = canvas.getWidth();
 		float h = canvas.getHeight(); 
 		
-		canvas.drawPaint(white);
+		canvas.drawPaint(whiteFilled);
 
         if(segment!=null) {
 
@@ -132,6 +134,8 @@ public class SegmentView extends View {
                 case SEMAPHORE_TOP:
                 case SEMAPHORE3_BOTTOM:
                 case SEMAPHORE3_TOP:
+                case SEMAPHORE4_BOTTOM:
+                case SEMAPHORE4_TOP:
                 case STRAIGHT:
                 case STRAIGHT_ROUTE_MARKER:
                     canvas.drawLine(0, h / 2, w - 1, h / 2, black);
@@ -239,18 +243,25 @@ public class SegmentView extends View {
 
             // semaphore
             if (segment.isSemaphore()) {
-                float dh = h/4 + (segment.getType()== Segment.Type.SEMAPHORE_TOP|| segment.getType()== Segment.Type.SEMAPHORE3_TOP ? 0 : h/2);
+                float dh = h/4 + (segment.getType()== Segment.Type.SEMAPHORE_TOP|| segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE4_TOP ? 0 : h/2);
                 float sl = w/4;
-                if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) sl=w/3;
+                if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM
+                        || segment.getType()== Segment.Type.SEMAPHORE4_BOTTOM || segment.getType()== Segment.Type.SEMAPHORE4_TOP) sl=w/3;
                 float sh = h/6;
                 canvas.drawRect(w/2-sl/2, dh-sh, w/2+sl/2, dh+sh, blackFill );
                 if(segment.getType()== Segment.Type.SEMAPHORE_TOP || segment.getType()== Segment.Type.SEMAPHORE_BOTTOM) {
-                    canvas.drawCircle(w / 2 - sl / 4, dh, sh / 4, segment.getState() == 0 ? red : greyFill);
-                    canvas.drawCircle(w / 2 + sl / 4, dh, sh / 4, segment.getState() == 1 ? greenFilled : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 4, dh, sh / 4, segment.getState() == 0 ? redSignal : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 4, dh, sh / 4, segment.getState() == 1 ? greenSignal : greyFill);
                 } else if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) {
-                    canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, segment.getState() == 0 ? red : greyFill);
-                    canvas.drawCircle(w / 2         , dh, sh / 4, segment.getState() == 2 ? orangeFilled : greyFill);
-                    canvas.drawCircle(w / 2 + sl / 3, dh, sh / 4, segment.getState() >= 1 ? greenFilled : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, segment.getState() == 0 ? redSignal : greyFill);
+                    canvas.drawCircle(w / 2         , dh, sh / 4, segment.getState() == 2 ? orangeSignal : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 3, dh, sh / 4, segment.getState() >= 1 ? greenSignal : greyFill);
+                }  else if(segment.getType()== Segment.Type.SEMAPHORE4_TOP || segment.getType()== Segment.Type.SEMAPHORE4_BOTTOM) {
+                    canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, (segment.getState() == 0)||(segment.getState()==3) ? redSignal : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 9 , dh, sh / 4, segment.getState() == 2 ? orangeSignal : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 9, dh, sh / 4, (segment.getState() == 1)||(segment.getState() == 2) ? greenSignal : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 3-sl/16, dh+sl/16, sh / 5, segment.getState() == 3 ? whiteFilled : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 3+sl/16, dh-sl/16, sh / 5, segment.getState() == 3 ? whiteFilled : greyFill);
                 }
 
                 String display = "";
@@ -268,7 +279,7 @@ public class SegmentView extends View {
                 float dh = h/2;
                 float sl = h/6; float sh = h/6;
                 canvas.drawRect(w/2-sl, dh-sh, w/2+sl, dh+sh, blackFill );
-                canvas.drawCircle(w/2, dh, sh/2, segment.getState()==0 ? greyFill : greenFilled);
+                canvas.drawCircle(w/2, dh, sh/2, segment.getState()==0 ? greyFill : greenSignal);
 
                 String display = "";
                 if (!TextUtils.isEmpty(segment.getId())) {
@@ -290,7 +301,7 @@ public class SegmentView extends View {
                 float r = h/12;
 
                 for(int i=0; i<Segment.FUNCTION_DECODER_FUNCTIONS; i++) {
-                    canvas.drawCircle(dw+cd*i+r+cd/8, h/2, r, segment.getFunctionValue(i) ?  greenFilled : greyFill);
+                    canvas.drawCircle(dw+cd*i+r+cd/8, h/2, r, segment.getFunctionValue(i) ? greenSignal : greyFill);
                 }
 
                 String display = "";
