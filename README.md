@@ -4,12 +4,14 @@ An Android SRCP client
 
 I control my model railroad with the Simple Railroad Protocol. This client runs nicely on tablets.
 Construct your layout, control switches and trains.
-Tested with the SRCPd server on a Raspberry Pi.
-http://srcpd.sourceforge.net
-
-This app is currently total Beta and thus not available on Google Play.
+Tested with the SRCPd server on a Raspberry Pi and DDL connection thru a Märklin Delta divice 
+with a medium sized DCC H0 scale layout.
+For SRCPd, see: http://srcpd.sourceforge.net
 
 ## Limitations
+
+This is a quite simple implementation meant for users interested in building an open source based
+digital model railroad.
 
 The app (nor the server) cannot know switch settings after a server reboot.
 
@@ -26,9 +28,7 @@ To import or recover, name the file signalbox.json and restart the app, afterwar
 
 ## Disclaimer
 
-Source code is under LGPL. Use Android Studio 3.0 to build.
+Source code is under Apache 2 License. Use Android Studio 3.x to build.
 
-If you would like to have the APK without building it for yourself, contact me.
-
-I cannot be made responsible for any damage the app could do to your railroad.
+I cannot be made responsible for any damage the app could do to your model railroad.
 
