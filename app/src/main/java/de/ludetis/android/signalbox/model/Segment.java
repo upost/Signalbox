@@ -16,7 +16,8 @@ public class Segment implements Serializable {
     public enum Type {EMPTY, STRAIGHT, CURVE_UP, CURVE_DOWN, UP_CURVE, DOWN_CURVE, ACROSS_UP, ACROSS_DOWN,
         SWITCH_UP, SWITCH_DOWN, UP_SWITCH, DOWN_SWITCH, MARKER, STRAIGHT_MARKER, SWITCHS_DOWN, DOWN_SWITCHS, SWITCHS_UP, UP_SWITCHS,
     STRAIGHT_PLATFORM_BELOW, STRAIGHT_PLATFORM_ABOVE, BUMPER_LEFT, BUMPER_RIGHT, SEMAPHORE_TOP, SEMAPHORE_BOTTOM,
-        GENERIC_ON_OFF_SWITCH, GENERIC_FUNCTION, STRAIGHT_ROUTE_MARKER, UP_ROUTE_MARKER, SEMAPHORE3_BOTTOM, SEMAPHORE3_TOP, SEMAPHORE4_BOTTOM, SEMAPHORE4_TOP, DOWN_ROUTE_MARKER
+        GENERIC_ON_OFF_SWITCH, GENERIC_FUNCTION, STRAIGHT_ROUTE_MARKER, UP_ROUTE_MARKER, SEMAPHORE3_BOTTOM, SEMAPHORE3_TOP, SEMAPHORE4_BOTTOM, SEMAPHORE4_TOP, DOWN_ROUTE_MARKER,
+        V_UP_RIGHT, V_UP_LEFT, V_DOWN_RIGHT, V_DOWN_LEFT, V_UP, V_UP_MARKER,
     };
 
     public static final Type[] SWITCH_TYPES = {Type.SWITCH_DOWN, Type.SWITCH_UP, Type.UP_SWITCH, Type.DOWN_SWITCH,
@@ -25,7 +26,7 @@ public class Segment implements Serializable {
     public static final Type[] SEMAPHORE_TYPES = { Type.SEMAPHORE_BOTTOM, Type.SEMAPHORE_TOP,Type.SEMAPHORE3_BOTTOM, Type.SEMAPHORE3_TOP,Type.SEMAPHORE4_BOTTOM, Type.SEMAPHORE4_TOP};
     public static final Type[] GENERIC_ACCESSORY_TYPES = {Type.GENERIC_ON_OFF_SWITCH };
     public static final Type[] GENERIC_FUNCTION_TYPES = { Type.GENERIC_FUNCTION };
-    public static final Type[] ROUTE_TYPES = { Type.STRAIGHT_ROUTE_MARKER, Type.UP_ROUTE_MARKER, Type.DOWN_ROUTE_MARKER,
+    public static final Type[] ROUTE_TYPES = { Type.STRAIGHT_ROUTE_MARKER, Type.UP_ROUTE_MARKER, Type.DOWN_ROUTE_MARKER, Type.V_UP_MARKER,
             Type.SEMAPHORE_BOTTOM, Type.SEMAPHORE_TOP,Type.SEMAPHORE3_BOTTOM, Type.SEMAPHORE3_TOP,Type.SEMAPHORE4_BOTTOM, Type.SEMAPHORE4_TOP, Type.BUMPER_LEFT, Type.BUMPER_RIGHT };
 
     private Type type = Type.EMPTY;
@@ -38,6 +39,13 @@ public class Segment implements Serializable {
 
     public Segment() {
         function = new int[FUNCTION_DECODER_FUNCTIONS];
+    }
+
+    public Segment(Type type,String id, int x, int y) {
+        this.type = type;
+        this.id = id;
+        this.x = x;
+        this.y = y;
     }
 
     public Segment(Type type, String id, int x, int y, int address, int bus) {

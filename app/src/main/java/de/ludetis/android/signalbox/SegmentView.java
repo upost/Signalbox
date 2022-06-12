@@ -214,6 +214,28 @@ public class SegmentView extends View {
                     canvas.drawLine(0, h / 2, w / 2, h / 2, black);
                     canvas.drawLine(w / 2, h / 3, w / 2, 2 * h / 3, black);
                     break;
+                case V_UP_RIGHT:
+                    canvas.drawLine(w/2, h - 1, w / 2, h / 2, black);
+                    canvas.drawLine(w/2, h / 2, w - 1, 0, black);
+                    break;
+                case V_UP_LEFT:
+                    canvas.drawLine(w/2, h - 1, w / 2, h / 2, black);
+                    canvas.drawLine(w/2, h / 2, 0, 0, black);
+                    break;
+                case V_DOWN_RIGHT:
+                    canvas.drawLine(w/2, 0, w / 2, h / 2, black);
+                    canvas.drawLine(w/2, h / 2, w - 1, h-1, black);
+                    break;
+                case V_DOWN_LEFT:
+                    canvas.drawLine(w/2, 0, w / 2, h / 2, black);
+                    canvas.drawLine(w/2, h / 2, 0, h-1, black);
+                    break;
+                case V_UP:
+                case V_UP_MARKER:
+                    canvas.drawLine(w/2, 0, w / 2, h-1, black);
+                    break;
+
+
             }
 
             // marker
@@ -249,19 +271,33 @@ public class SegmentView extends View {
                         || segment.getType()== Segment.Type.SEMAPHORE4_BOTTOM || segment.getType()== Segment.Type.SEMAPHORE4_TOP) sl=w/3;
                 float sh = h/6;
                 canvas.drawRect(w/2-sl/2, dh-sh, w/2+sl/2, dh+sh, blackFill );
-                if(segment.getType()== Segment.Type.SEMAPHORE_TOP || segment.getType()== Segment.Type.SEMAPHORE_BOTTOM) {
+                if(segment.getType()== Segment.Type.SEMAPHORE_TOP ) {
                     canvas.drawCircle(w / 2 - sl / 4, dh, sh / 4, segment.getState() == 0 ? redSignal : greyFill);
                     canvas.drawCircle(w / 2 + sl / 4, dh, sh / 4, segment.getState() == 1 ? greenSignal : greyFill);
-                } else if(segment.getType()== Segment.Type.SEMAPHORE3_TOP || segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) {
+                } else if(segment.getType()== Segment.Type.SEMAPHORE3_TOP ) {
                     canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, segment.getState() == 0 ? redSignal : greyFill);
                     canvas.drawCircle(w / 2         , dh, sh / 4, segment.getState() == 2 ? orangeSignal : greyFill);
                     canvas.drawCircle(w / 2 + sl / 3, dh, sh / 4, segment.getState() >= 1 ? greenSignal : greyFill);
-                }  else if(segment.getType()== Segment.Type.SEMAPHORE4_TOP || segment.getType()== Segment.Type.SEMAPHORE4_BOTTOM) {
+                }  else if(segment.getType()== Segment.Type.SEMAPHORE4_TOP ) {
                     canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, (segment.getState() == 0)||(segment.getState()==3) ? redSignal : greyFill);
                     canvas.drawCircle(w / 2 - sl / 9 , dh, sh / 4, segment.getState() == 2 ? orangeSignal : greyFill);
                     canvas.drawCircle(w / 2 + sl / 9, dh, sh / 4, (segment.getState() == 1)||(segment.getState() == 2) ? greenSignal : greyFill);
                     canvas.drawCircle(w / 2 + sl / 3-sl/16, dh+sl/16, sh / 5, segment.getState() == 3 ? whiteFilled : greyFill);
                     canvas.drawCircle(w / 2 + sl / 3+sl/16, dh-sl/16, sh / 5, segment.getState() == 3 ? whiteFilled : greyFill);
+                }
+                if(segment.getType()== Segment.Type.SEMAPHORE_BOTTOM) {
+                    canvas.drawCircle(w / 2 + sl / 4, dh, sh / 4, segment.getState() == 0 ? redSignal : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 4, dh, sh / 4, segment.getState() == 1 ? greenSignal : greyFill);
+                } else if( segment.getType()== Segment.Type.SEMAPHORE3_BOTTOM) {
+                    canvas.drawCircle(w / 2 + sl / 3, dh, sh / 4, segment.getState() == 0 ? redSignal : greyFill);
+                    canvas.drawCircle(w / 2         , dh, sh / 4, segment.getState() == 2 ? orangeSignal : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 3, dh, sh / 4, segment.getState() >= 1 ? greenSignal : greyFill);
+                }  else if( segment.getType()== Segment.Type.SEMAPHORE4_BOTTOM) {
+                    canvas.drawCircle(w / 2 + sl / 3, dh, sh / 4, (segment.getState() == 0)||(segment.getState()==3) ? redSignal : greyFill);
+                    canvas.drawCircle(w / 2 + sl / 9 , dh, sh / 4, segment.getState() == 2 ? orangeSignal : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 9, dh, sh / 4, (segment.getState() == 1)||(segment.getState() == 2) ? greenSignal : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 3+sl/16, dh-sl/16, sh / 5, segment.getState() == 3 ? whiteFilled : greyFill);
+                    canvas.drawCircle(w / 2 - sl / 3-sl/16, dh+sl/16, sh / 5, segment.getState() == 3 ? whiteFilled : greyFill);
                 }
 
                 String display = "";

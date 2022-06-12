@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SoundEffectConstants;
 import android.view.View;
@@ -66,6 +67,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
     public static final String[] PERMISSIONS = {Manifest.permission.READ_EXTERNAL_STORAGE};
     private static final int DEFAULT_FUNCTION_KEYS = 5;
     private static final int THUMBNAIL_SIZE = 128;
+    private Segment clipboardSegment;
 
     enum RouteSetStepType { NONE, WAIT_START, WAIT_END };
 
@@ -190,6 +192,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
         if(server!=null) {
             loadLayout();
             fillContainer();
+
         }
 
         connected=false;
@@ -394,9 +397,59 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             storage.flush();
             fillContainer();
         } else {
+            tryToFillGaps();
             Log.d(LOG_TAG, "loaded layout");
+            loadAllState();
         }
     }
+
+    private void tryToFillGaps() {
+        // find max x and y
+        int maxx=0,maxy=0;
+        for(Segment s : layout) {
+            if(s.getX()>maxx) maxx=s.getX();
+            if(s.getY()>maxy) maxy=s.getY();
+        }
+        // fill gaps
+        for(int x=0; x<maxx; x++) {
+            for(int y=0; y<maxy; y++) {
+                boolean found=false;
+                for(Segment s : layout) {
+                    if(s.getY()==y && s.getX()==x) {
+                        found=true;
+                    }
+                }
+                if(!found) {
+                    Log.w(getLocalClassName(),"no segment at " + x + ";" + y + ", adding empty");
+                    Segment segment = new Segment(Segment.Type.EMPTY,"", x,y,0,0);
+                    layout.add(segment);
+                }
+            }
+        }
+    }
+
+    private void loadAllState() {
+        for(Segment s : layout) {
+
+            Integer state = (Integer) storage.get("state_" + s.getId());
+            if(state!=null) {
+                Log.i(LOG_TAG, "setting from storage: " + s.getId() + " to " + state);
+                s.setState(state);
+            }
+
+        }
+    }
+
+    private void saveAllState() {
+        for(Segment s : layout) {
+            if(!TextUtils.isEmpty(s.getId())) {
+                Log.i(LOG_TAG, "saving to storage: " + s.getId() + " to " + s.getState());
+                storage.put("state_" + s.getId(), s.getState());
+            }
+        }
+        storage.flush();
+    }
+
 
     /**
      * fill container with layout
@@ -439,8 +492,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
 
     @Override
     protected void onDestroy() {
+        saveAllState();
         super.onDestroy();
-        //disconnect();
     }
 
 
@@ -550,6 +603,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 break;
         }
     }
+
 
     private void showAboutDialog() {
         AboutDialog dlg = new AboutDialog(this, this::export);
@@ -984,6 +1038,29 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 loadLayout();
                 fillContainer();
             }
+
+            @Override
+            public void onCopy() {
+                clipboardSegment = segmentView.getSegment();
+            }
+
+            @Override
+            public void onPaste() {
+                if(clipboardSegment!=null) {
+                    // remove segment
+                    int xx=segmentView.getSegment().getX();
+                    int yy=segmentView.getSegment().getY();
+                    layout.remove(segmentView.getSegment());
+
+                    // copy segment
+                    layout.add(new Segment(clipboardSegment.getType(),clipboardSegment.getId(),
+                            xx,yy,clipboardSegment.getAddress(),clipboardSegment.getBus()));
+                    storage.put(LAYOUT, layout);
+                    storage.flush();
+                    loadLayout();
+                    fillContainer();
+                }
+            }
         });
         dlg.show();
     }
@@ -1099,8 +1176,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             for(Segment s : layout) {
                 if(s.getBus()==msg.getBus() && s.getAddress()==msg.getAddress()) {
                     if(msg.getValue()>0) {
-                        s.setState(msg.getPort());
-                        Log.d(LOG_TAG, "ga " + s.getAddress() + " is currently set to" + s.getState());
+                        //s.setState(msg.getPort());
+                        Log.d(LOG_TAG, "IGNORING... ga " + s.getAddress() + " is currently set to" + s.getState());
                         break;
                     }
                 }
@@ -1126,6 +1203,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             case DISCONNECTED:
                 Toast.makeText(MainActivity.this, getString(R.string.disconnected), Toast.LENGTH_SHORT).show();
                 connected=false;
+                saveAllState();
                 buttonConnection.setImageResource(R.drawable.disconnected);
                 buttonPower.setVisibility(View.INVISIBLE);
                 break;
@@ -1138,6 +1216,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
                 break;
             case POWER_OFF:
                 power=false;
+                saveAllState();
                 buttonConnection.setVisibility(View.VISIBLE);
                 buttonPower.setImageResource(R.drawable.power_off);
                 break;
@@ -1151,6 +1230,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Seek
             case CONNECTIVITY_LOST:
                 Toast.makeText(MainActivity.this, getString(R.string.no_connectivity), Toast.LENGTH_SHORT).show();
                 connected=false;
+                saveAllState();
                 buttonConnection.setImageResource(R.drawable.disconnected);
                 buttonPower.setVisibility(View.INVISIBLE);
                 buttonConnection.setEnabled(false);

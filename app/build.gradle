@@ -5,15 +5,14 @@ repositories {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "de.ludetis.android.signalbox"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 111
-        versionName "1.11"
+        versionCode 114
+        versionName "1.14"
     }
     buildTypes {
         release {
@@ -25,6 +24,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -33,5 +35,6 @@ dependencies {
     implementation files('libs/log4j-1.2.11.jar')
     implementation 'de.greenrobot:eventbus:2.4.1'
     implementation 'org.mapdb:mapdb:1.0.9a' // newer versions are not supported on Android!
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.8.9'
+    testImplementation 'junit:junit:4.13.2'
 }

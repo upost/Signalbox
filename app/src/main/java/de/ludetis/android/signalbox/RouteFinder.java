@@ -3,6 +3,7 @@ package de.ludetis.android.signalbox;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -126,17 +127,23 @@ public class RouteFinder {
     private Set<Segment> findNextSegmentsFrom(Segment s, int dir) {
         Set<Segment> res = new HashSet<>();
         SegmentConnector sc = new SegmentConnector(s.getType());
-        boolean[] dirs;
+        Set<SegmentConnector.ConnectAt> dirs = new HashSet<>();
         if(dir>0) {
-            // use right
-            dirs = sc.getRight();
+            // use right or up
+            dirs.addAll(Arrays.asList(SegmentConnector.ConnectAt.N, SegmentConnector.ConnectAt.NE, SegmentConnector.ConnectAt.E, SegmentConnector.ConnectAt.SE));
         } else {
-            dirs = sc.getLeft();
+            dirs.addAll(Arrays.asList(SegmentConnector.ConnectAt.S, SegmentConnector.ConnectAt.SW, SegmentConnector.ConnectAt.W, SegmentConnector.ConnectAt.NW));
         }
-        for(int i=0; i<3; i++) {
-            if(dirs[i]) {
-                Segment next = findSegmentAt(s.getX()+dir,s.getY()-1+i);
-                if(next!=null) res.add(next);
+        for(SegmentConnector.ConnectAt d : dirs) {
+            Segment next = findSegmentAt(s.getX()+d.getDx(),s.getY()+d.getDy());
+            if(next!=null) {
+                // check if there is a fitting connector
+                SegmentConnector other = new SegmentConnector(next.getType());
+                for(SegmentConnector.ConnectAt ca : other.getConnectAt()) {
+                    if(d==ca.getOpposite()) {
+                        res.add(next);
+                    }
+                }
             }
         }
         return res;

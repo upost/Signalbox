@@ -1,5 +1,9 @@
 package de.ludetis.android.signalbox;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import de.ludetis.android.signalbox.model.Segment;
 
 /**
@@ -12,6 +16,26 @@ public class SegmentConnector {
     private final Segment.Type segmentType;
     private boolean[] left = {false,false,false};
     private boolean[] right = {false,false,false};
+    public  enum ConnectAt {
+        NW(-1,-1),N(0,-1), NE(1,-1),
+        W(-1,0),SW(-1,1),S(0,1), SE(1,1), E(1,0);
+        private ConnectAt(final int _dx,final int _dy) { dx=_dx; dy=_dy;}
+        private int dx,dy;
+        public int getDx() {
+            return dx;
+        }
+
+        public int getDy() {
+            return dy;
+        }
+        public ConnectAt getOpposite() {
+            for(ConnectAt ca : ConnectAt.values()) {
+                if(dx==-ca.dx && dy==-ca.dy) return ca;
+            }
+            return null;
+        }
+    };
+    private Set<ConnectAt> connectAt= new HashSet<>();
 
     public SegmentConnector(Segment.Type st) {
         segmentType = st;
@@ -23,110 +47,80 @@ public class SegmentConnector {
             case SEMAPHORE_TOP:
             case STRAIGHT:
             case STRAIGHT_ROUTE_MARKER:
-                left[1]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.W,ConnectAt.E));
                 break;
             case CURVE_UP:
-                left[1]=true;
-                right[0]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.W,ConnectAt.NE));
                 break;
             case CURVE_DOWN:
-                left[1]=true;
-                right[2]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.W,ConnectAt.SE));
                 break;
             case UP_CURVE:
-                left[2]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.SW,ConnectAt.E));
                 break;
             case DOWN_CURVE:
-                left[0]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.NW,ConnectAt.E));
                 break;
             case SWITCH_UP:
-                left[1]=true;
-                right[0]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.W,ConnectAt.NE,ConnectAt.E));
                 break;
             case SWITCH_DOWN:
-                left[1]=true;
-                right[2]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.W,ConnectAt.SE,ConnectAt.E));
                 break;
             case UP_SWITCH:
-                left[1]=true;
-                left[2]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.SW,ConnectAt.W,ConnectAt.E));
                 break;
             case DOWN_SWITCH:
-                left[1]=true;
-                left[0]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.NW,ConnectAt.W,ConnectAt.E));
                 break;
             case SWITCHS_DOWN:
-                left[1]=true;
-                left[0]=true;
-                right[2]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.NW,ConnectAt.W,ConnectAt.SE));
                 break;
             case SWITCHS_UP:
-                left[0]=true;
-                right[2]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.SE,ConnectAt.NW,ConnectAt.E));
                 break;
             case DOWN_SWITCHS:
-                left[2]=true;
-                right[0]=true;
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.NE,ConnectAt.W,ConnectAt.SW));
                 break;
             case UP_SWITCHS:
-                left[1]=true;
-                left[2]=true;
-                right[0]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.SW,ConnectAt.W,ConnectAt.NE));
                 break;
             case ACROSS_UP:
             case UP_ROUTE_MARKER:
-                left[2]=true;
-                right[0]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.SW,ConnectAt.NE));
                 break;
             case ACROSS_DOWN:
             case DOWN_ROUTE_MARKER:
-                left[0]=true;
-                right[2]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.NW,ConnectAt.SE));
                 break;
             case BUMPER_LEFT:
-                right[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.E));
                 break;
             case BUMPER_RIGHT:
-                left[1]=true;
+                connectAt.addAll(Arrays.asList(ConnectAt.W));
                 break;
+            case V_UP:
+            case V_UP_MARKER:
+                connectAt.addAll(Arrays.asList(ConnectAt.N,ConnectAt.S));
+                break;
+            case V_UP_LEFT:
+                connectAt.addAll(Arrays.asList(ConnectAt.S,ConnectAt.NW));
+                break;
+            case V_UP_RIGHT:
+                connectAt.addAll(Arrays.asList(ConnectAt.S,ConnectAt.NE));
+                break;
+            case V_DOWN_LEFT:
+                connectAt.addAll(Arrays.asList(ConnectAt.SW,ConnectAt.N));
+                break;
+            case V_DOWN_RIGHT:
+                connectAt.addAll(Arrays.asList(ConnectAt.SE,ConnectAt.N));
+                break;
+
         }
     }
 
-    public boolean leftTop() {
-        return left[0];
-    }
-    public boolean leftCenter() {
-        return left[1];
-    }
-    public boolean leftBottom() {
-        return left[2];
-    }
-
-    public boolean rightTop() {
-        return right[0];
-    }
-    public boolean rightCenter() {
-        return right[1];
-    }
-    public boolean rightBottom() {
-        return right[2];
-    }
-
-    public boolean[] getLeft() {
-        return left;
-    }
-
-    public boolean[] getRight() {
-        return right;
+    public Set<ConnectAt> getConnectAt() {
+        return connectAt;
     }
 
     public int calcSwitchSetting(int dyLeft, int dyRight) {

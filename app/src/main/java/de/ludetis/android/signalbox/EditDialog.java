@@ -17,9 +17,12 @@ public class EditDialog extends Dialog implements View.OnClickListener {
     private static final int SEGMENT_HEIGHT = 100;
     private final OnEditListener listener;
 
+
     interface OnEditListener {
         void onSegmentTypeChanged(Segment.Type t, String id);
         void onMove(int x, int y);
+        void onCopy();
+        void onPaste();
     }
 
     public EditDialog(Context context, OnEditListener listener) {
@@ -34,6 +37,8 @@ public class EditDialog extends Dialog implements View.OnClickListener {
             segmentView.setOnClickListener(this);
             findViewById(R.id.move_down).setOnClickListener(this);
             findViewById(R.id.move_right).setOnClickListener(this);
+            findViewById(R.id.copy).setOnClickListener(this);
+            findViewById(R.id.paste).setOnClickListener(this);
             container.addView(segmentView, lp);
         }
     }
@@ -44,11 +49,22 @@ public class EditDialog extends Dialog implements View.OnClickListener {
             listener.onSegmentTypeChanged(((SegmentView) v) .getSegment().getType(), ((SegmentView) v) .getSegment().getId());
             dismiss();
         }
-        if(v.getId()==R.id.move_down) {
-            listener.onMove(0,1);
+        switch (v.getId()) {
+            case R.id.move_down:
+                listener.onMove(0,1);
+                break;
+            case R.id.move_right:
+                listener.onMove(1,0);
+                break;
+            case R.id.copy:
+                listener.onCopy();
+                break;
+            case R.id.paste:
+                listener.onPaste();
+                break;
+            default:
+                break;
         }
-        if(v.getId()==R.id.move_right) {
-            listener.onMove(1,0);
-        }
+
     }
 }
